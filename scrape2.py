@@ -96,7 +96,7 @@ for a in section_list:
         filename_report_pdf = target_dir + report_display_name + ".pdf"
         print (i + 1), "] display name {" + report_display_name + "}"
         tree_report_wrapper = etree.parse(url_report_wrapper, parser)
-        print "   loading page " + url_report_wrapper
+        print "   loading page {" + url_report_wrapper + "}"
         report_pdf_query = normalize(tree_report_wrapper.xpath(xpath_report_pdf_query))
         url_report_pdf = url_report_pdf_base_location + report_pdf_query
         print "   remote PDF located {" + url_report_pdf + "}"
