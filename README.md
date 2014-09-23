@@ -1,8 +1,8 @@
 DATA LIBERATION PROJECT
 
-Information that should be freely accessible - that supposedly is publically accessible, but which is stored so cumbersomely on the New Hampshire Secretary of State website that is might as well be under lock and key.
+Information that should be freely accessible - that supposedly is publicly accessible, but which is stored so cumbersomely on the New Hampshire Secretary of State website that is might as well be under lock and key.
 
-This is important information.  There’s a reason it’s supposed to be publically accessible.  The data in question is who is spending the all the dark money in our supposedly fair elections. Specifically New Hampshire’s elections, because you’ve got to start somewhere and NH is a very important battleground state, but I see this sort of data liberation project eventually growing nationally.  
+This is important information.  There’s a reason it’s supposed to be publicly accessible.  The data in question is who is spending the all the dark money in our supposedly fair elections. Specifically New Hampshire’s elections, because you’ve got to start somewhere and NH is a very important battleground state, but I see this sort of data liberation project eventually growing nationally.
 
 For this project, I believe, there’s two main questions that people ought to know the answer to.  First, there are nearly 1000 lobbyist-client arrangements in NH, and I really think citizens ought to know who pays for these lobbyists, and how much are they paying to make sure that their own agenda is front and center in the state legislature.
 
