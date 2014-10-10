@@ -1,0 +1,249 @@
+/usr/bin/python2.7 /home/rslinford/Dev/PycharmProjects/H4D_Data_Liberation/scrape.py
+
+Target download directory {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford}
+
+Downloading 47 reports listed at {http://sos.nh.gov/IndExpPrim12.aspx}
+
+1] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/America Votes Action Fund New Hampshire.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27459}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/6ebb3dcf-d492-4f03-b1e0-df604b46356e.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/America Votes Action Fund New Hampshire.pdf}
+
+2] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/America Votes Action Fund New Hampshire 102312.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27652}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/c58e051a-e91c-49db-952b-e6e63625b592.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/America Votes Action Fund New Hampshire 102312.pdf}
+
+3] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/America Votes Action Fund New Hampshire 102612.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27671}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/4a245301-1148-4c3e-aed8-c8eeb3c25bbe.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/America Votes Action Fund New Hampshire 102612.pdf}
+
+4] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/America Votes Action Fund New Hampshire 110212.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27896}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/124cf7cd-b0b8-40c3-8d80-a383bed78364.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/America Votes Action Fund New Hampshire 110212.pdf}
+
+5] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/America Votes Action Fund New Hampshire 110512.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27924}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/0f949dd0-e77d-403d-9329-fe8645077069.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/America Votes Action Fund New Hampshire 110512.pdf}
+
+6] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/American Federation of State County and Municipal Employees.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=26407}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/aaffdcab-d7db-45e5-b358-b2f49f9b2761.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/American Federation of State County and Municipal Employees.pdf}
+
+7] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Citizens for a Better New Hampshire 090412.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=26104}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/7c4c199f-bef5-4696-aed3-7b42cb2c9220.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Citizens for a Better New Hampshire 090412.pdf}
+
+8] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Citizens for a Better New Hampshire 090612.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=26197}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/dd5a6284-971c-4309-9f8f-243f35a58c9a.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Citizens for a Better New Hampshire 090612.pdf}
+
+9] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Citizens for a Better New Hampshire 090612 (2).pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=26214}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/08d9964d-e3c9-4b22-99d4-56c794d91b8a.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Citizens for a Better New Hampshire 090612 (2).pdf}
+
+10] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Cornerstone Action PAC 102412.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27669}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/d6bf449d-8037-4792-8d37-c948adbe4ab5.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Cornerstone Action PAC 102412.pdf}
+
+11] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Cornerstone Action PAC 102912.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27728}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/0d4da5b9-a390-41a7-be9f-c0291c623e15.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Cornerstone Action PAC 102912.pdf}
+
+12] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Cornerstone Action PAC 110212.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27895}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/accb2f6a-5bd2-47c2-a8de-865a04726508.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Cornerstone Action PAC 110212.pdf}
+
+13] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/IAFF FIREPac Non-Federal 092812.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=26769}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/13ee71cc-6bbd-4bde-a136-9c89c1375a15.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/IAFF FIREPac Non-Federal 092812.pdf}
+
+14] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/IAFF FIREPac Non-Federal 100412.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27104}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/237e455c-35dc-4bdf-8a93-16281f2600e2.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/IAFF FIREPac Non-Federal 100412.pdf}
+
+15] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Liberty for All Super PAC-NH.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27605}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/fc26a2e6-25d6-4197-a9ed-8997a111b42a.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Liberty for All Super PAC-NH.pdf}
+
+16] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Martha Fuller Clark 110612.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27941}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/e1e823e9-77bb-40dc-91c0-343b6f00c4c7.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Martha Fuller Clark 110612.pdf}
+
+17] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NARAL Pro-Choice NH PAC.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27832}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/3494be3d-3830-4604-806e-130bb83c5e92.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NARAL Pro-Choice NH PAC.pdf}
+
+18] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NEA Advocacy Fund 091212.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=26408}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/45d052da-d01b-4813-9ca1-03ee78d51e31.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NEA Advocacy Fund 091212.pdf}
+
+19] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NEA Advocacy Fund 092612.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=26754}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/2a8aa16d-b179-4cb0-97bc-3d6a08145e54.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NEA Advocacy Fund 092612.pdf}
+
+20] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NEA Advocacy Fund 100412.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27105}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/65f3a81a-334a-4a46-950d-fb90c583774b.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NEA Advocacy Fund 100412.pdf}
+
+21] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NEA Advocacy Fund 102312.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27644}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/fc6ab9a2-3430-4749-b8bc-74affdbdc781.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NEA Advocacy Fund 102312.pdf}
+
+22] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NEA Advocacy Fund 102612.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27680}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/f3dcbcda-a017-4c8b-9c7c-932b94c06cf6.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NEA Advocacy Fund 102612.pdf}
+
+23] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NEA Advocacy Fund 110712.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=28128}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/feed1840-0cfe-4489-811f-7d737b1abf5a.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NEA Advocacy Fund 110712.pdf}
+
+24] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Citizens for Truth.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=26238}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/f933fb34-c7df-4d87-a89a-64cb79a4ee8d.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Citizens for Truth.pdf}
+
+25] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Freedom Fund.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=26768}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/6888885c-3fb5-430f-8778-45ffbb75bc92.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Freedom Fund.pdf}
+
+26] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Freedom Fund 100812.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27422}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/f71ea406-5200-415d-a4b8-2cad65abd069.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Freedom Fund 100812.pdf}
+
+27] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Freedom Fund 101112.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27431}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/1f843944-e682-4a67-884a-9e5fa598a851.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Freedom Fund 101112.pdf}
+
+28] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Freedom Fund 101512.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27460}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/5b73bc19-c46c-42d9-946a-2c9f5599c735.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Freedom Fund 101512.pdf}
+
+29] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Freedom Fund 102212.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27606}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/8929e4c7-2f7a-44ee-a335-d005647b635e.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Freedom Fund 102212.pdf}
+
+30] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Freedom Fund 110112.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27862}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/8dcfde0a-7a81-4baf-a127-984f1fe6b548.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Freedom Fund 110112.pdf}
+
+31] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH House Republican Victory PAC 102512.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27670}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/a301b8bd-b231-4281-a66b-3a65aa4e4d96.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH House Republican Victory PAC 102512.pdf}
+
+32] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH House Republican Victory PAC 103012.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=28127}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/4611babc-bee8-49e7-9ac8-f70a128ce54a.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH House Republican Victory PAC 103012.pdf}
+
+33] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH House Republican Victory PAC 110112.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27861}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/f8e46fbd-e2fe-4265-831f-d6633d5e2f68.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH House Republican Victory PAC 110112.pdf}
+
+34] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Republican State Committee 061713.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=42369}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/0dfddcc5-f557-44ad-b8ef-b79a0cc75e2d.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Republican State Committee 061713.pdf}
+
+35] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Republican State Committee 110612.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27937}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/994db4f5-e151-43e7-be6b-7dd721c401e1.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Republican State Committee 110612.pdf}
+
+36] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Republicans for Freedom and Equality 083112.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=26105}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/2d8ec5b2-4e34-4687-868f-ff042fbb916d.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Republicans for Freedom and Equality 083112.pdf}
+
+37] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Republicans for Freedom and Equality 102312.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27650}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/c1016334-8c61-4e9e-a27b-298b40a57ee9.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/NH Republicans for Freedom and Equality 102312.pdf}
+
+38] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Professional Fire Fighters of NH090612.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=26213}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/ff79df31-0858-4e6c-a2f2-a9622cad3b83.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Professional Fire Fighters of NH090612.pdf}
+
+39] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 091712.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=26406}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/3032926a-0aab-492e-83d7-1ebaf16870e9.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 091712.pdf}
+
+40] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 092412.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=26755}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/44133bf2-23a7-47b2-b791-97b4def1bb9d.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 092412.pdf}
+
+41] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 101512.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27458}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/1466ad75-a591-4ee5-a9a7-34eb90068fe7.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 101512.pdf}
+
+42] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 101812.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27608}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/8b76acb4-f07f-4e7e-ad4c-5ecb1502b33d.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 101812.pdf}
+
+43] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 102212.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27607}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/aeea285a-cb18-4f33-962e-7c218f97cc56.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 102212.pdf}
+
+44] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 102312.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27651}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/ef99f541-9690-43e1-8ea5-df4aa8b93cfa.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 102312.pdf}
+
+45] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 102612.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27672}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/ff308dc6-e10d-4de2-880d-4cbd5e53c31d.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 102612.pdf}
+
+46] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 110512.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27923}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/ee371bbc-41a5-40f2-907e-71f71f7f3f5d.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Service Employees Internat'l Union Comm 110512.pdf}
+
+47] report {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Van Ostern for New Hampshire 110612.pdf}
+   loading page {http://sos.nh.gov/IndExpPrim12.aspx?id=27940}
+   remote PDF located {http://sos.nh.gov/assets/0/103/108/1381/1383/1403/1405/1832/6df3bb05-ecf9-44bb-98e3-734383ce274a.pdf}
+   stored locally {independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford/Van Ostern for New Hampshire 110612.pdf}
+
+Creating ZIP archive
+   {/home/rslinford/Dev/PycharmProjects/H4D_Data_Liberation/independent-2013-batch_crawled-2014-10-10_00-19-33_by-rslinford.zip}
+
+TODO: upload archive
+
+Done
+
+Process finished with exit code 0
