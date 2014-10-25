@@ -1,0 +1,13 @@
+Example - full URL:
+
+ http://sos.nh.gov/WorkArea/DownloadAsset.aspx?id=52028
+
+Anchor Tags
+
+ <a title="single lobbyists"                        href="/WorkArea/DownloadAsset.aspx?id=      49392 ">
+ <a title="multi lobbyists"                         href="/WorkArea/DownloadAsset.aspx?id=      49393 ">
+ <a title="Statement of Income and Expenses"        href="/WorkArea/DownloadAsset.aspx?id=      52028 ">
+ <a title="Addendum A"                              href="/WorkArea/DownloadAsset.aspx?id=      12643 ">
+ <a title="Addendum B"                              href="/WorkArea/DownloadAsset.aspx?id=      12644 ">
+ <a title="Addendum C"                              href="/WorkArea/DownloadAsset.aspx?id= 8589934980 ">
+ <a title="Signature form for associated lobbyists" href="/WorkArea/DownloadAsset.aspx?id=      52029 ">
