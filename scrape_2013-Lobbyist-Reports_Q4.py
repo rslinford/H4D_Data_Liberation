@@ -25,6 +25,7 @@ from shutil import make_archive
 import time
 import datetime
 import urllib2
+import sys
 
 
 def isinstance_string(x):
@@ -80,6 +81,7 @@ except OSError, e:
 print
 print 'Target download directory {' + target_dir + '}'
 print
+sys.stdout.flush()
 
 url_section_list_base = 'http://sos.nh.gov'
 url_section_list = url_section_list_base + '/Lob012914A.aspx'
@@ -114,6 +116,7 @@ for a in section_list:
 
     print
     print 'Downloading', len(report_query_list), 'reports in section {' + section_name + '} listed at {' + url_report_list + '}'
+    sys.stdout.flush()
     for i in range(len(report_query_list)):
         report_display_name = normalize(report_name_list[i])
         report_query = normalize(report_query_list[i])
@@ -122,8 +125,10 @@ for a in section_list:
         print section_name + ' ' + repr(i + 1) + '] display name {' + report_display_name + '}'
         tree_report_wrapper = etree.parse(url_report_wrapper, parser)
         print '   loading page {' + url_report_wrapper + '}'
+        sys.stdout.flush()
         report_pdf_query = normalize(tree_report_wrapper.xpath(xpath_report_pdf_query))
         url_report_pdf = url_report_pdf_base_location + report_pdf_query
+        sys.stdout.flush()
         print '   remote PDF located {' + url_report_pdf + '}'
         with open(filename_report_pdf, 'wb') as pdf_file:
             socket = urllib2.urlopen(url_report_pdf)
@@ -135,10 +140,12 @@ for a in section_list:
 
 print
 print 'Creating ZIP archive'
+sys.stdout.flush()
 zip_archive_name = make_archive(archive_name, 'zip', '.', target_dir)
 
 print '   {' + zip_archive_name + '}'
 print
-print 'TODO: upload archive'
-print
+# print 'TODO: upload archive'
+# print
 print 'Done'
+sys.stdout.flush()
