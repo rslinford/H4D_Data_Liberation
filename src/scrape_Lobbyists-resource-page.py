@@ -9,6 +9,7 @@ from shutil import make_archive
 import urllib2
 import time
 import datetime
+import sys
 
 
 def isinstance_string(x):
@@ -38,37 +39,34 @@ def normalize(a):
     return a[0].encode('utf8').strip()
 
 
-parser = etree.HTMLParser()
-
 right_now = time.time()
 current_timestamp = datetime.datetime.fromtimestamp(right_now).strftime('%Y-%m-%d_%H-%M-%S')
 current_username = os.environ.get('USERNAME')
-reporting_batch = 'home-lobbyists'
-run_tag = reporting_batch + '_crawled-' + current_timestamp + '_by-' + current_username
-archive_name = run_tag
-target_dir = '..{0}downloads{1}{2}'.format(os.sep, os.sep, run_tag)
+reporting_batch = 'blanks'
+run_tag = reporting_batch + '_' + current_timestamp
+download_root_path = '..{0}downloads'.format(os.sep)
+download_path = '{0}{1}{2}'.format(download_root_path, os.sep, run_tag)
 
 try:
-    os.makedirs(target_dir)
+    os.makedirs(download_path)
 except OSError, e:
-    if os.path.exists(target_dir):
+    if os.path.exists(download_path):
         with open('testwrite', 'w') as tw:
             text = 'testing write permissions'
             tw.write(text)
-        os.remove(target_dir)
-        print 'Local download target {' + target_dir + '}'
+        os.remove(download_path)
+        print 'Local download target {{}}'.format(download_path)
     else:
-        target_dir = ''
+        download_path = ''
         print 'Failed to create download target directory. Will attempt to write data to current directory.'
 
 print
-print 'Target download directory {{0}}'.format(target_dir)
+print 'Target download directory \n\t{0}'.format(download_path)
+print
+sys.stdout.flush()
 
 url_nh_base = 'http://sos.nh.gov'
-url_report_list = '{0}/lobby.aspx'.format(url_nh_base)
-# filename_report_list = 'IndependentExpenditures2012.html'
-
-print
+url_lobbyist_home_page = '{0}/lobby.aspx'.format(url_nh_base)
 
 """
 Example URLs to Assets
@@ -97,44 +95,42 @@ Home -> Lobbyists - All PDF Assets
 <a title="Signature form for associated lobbyists" href="/WorkArea/DownloadAsset.aspx?id=      52029 ">
 """
 
-xpath_asset_links = "//body//a[contains(@href,'DownloadAsset') and not(contains(@target, '_self'))]"
-# xpath_report_query = '//*[@id="ctl00_cphMain_dzTopSection_columnDisplay_ctl00_controlcolumn_ctl01_WidgetHost_WidgetHost_widget_ListSummary1"]/div[*]/a/@href'
-# xpath_report_name = '//*[@id="ctl00_cphMain_dzTopSection_columnDisplay_ctl00_controlcolumn_ctl01_WidgetHost_WidgetHost_widget_ListSummary1"]/div[*]/a/text()'
-xpath_page_title = '//*[@id="UxMainContentTitle"]/text()'
-#xpath_report_pdf_query = '//*[@id="ctl00_cphMain_dzTopSection_columnDisplay_ctl00_controlcolumn_ctl02_WidgetHost_WidgetHost_widget_CB"]/iframe/@src'
-tree_report_list = etree.parse(url_report_list, parser)
+xpath_download_links = "//body//a[contains(@href,'DownloadAsset') and not(contains(@target, '_self'))]"
+xpath_page_title = "//*[@id='UxMainContentTitle']/text()"
 
-report_query_list = tree_report_list.xpath(xpath_report_query)
-report_name_list = tree_report_list.xpath(xpath_report_name)
-page_title = normalize(tree_report_list.xpath(xpath_page_title))
+parser = etree.HTMLParser()
+tree_lobbyist_home_page = etree.parse(url_lobbyist_home_page, parser)
 
-print 'Downloading', len(report_query_list), 'reports listed at {' + url_report_list + '}'
-for i in range(len(report_query_list)):
+download_links = tree_lobbyist_home_page.xpath(xpath_download_links)
+page_title = normalize(tree_lobbyist_home_page.xpath(xpath_page_title))
+print 'Downloading ' + repr(len(download_links)) + ' assets listed on page\n\t' + url_lobbyist_home_page
+sys.stdout.flush()
+
+i = 0
+for a in download_links:
+    i += 1
     print
-    report_display_name = report_name_list[i]
-    report_query = report_query_list[i]
-    url_report_wrapper = url_report_list + report_query
-    filename_report_pdf = target_dir + os.sep + report_display_name + '.pdf'
-    print repr(i + 1) + '] report {' + filename_report_pdf + '}'
-    tree_report_wrapper = etree.parse(url_report_wrapper, parser)
-    print '   loading page {' + url_report_wrapper + '}'
-    report_pdf_query = normalize(tree_report_wrapper.xpath(xpath_report_pdf_query))
-    url_report_pdf = url_nh_base + report_pdf_query
-    print '   remote PDF located {' + url_report_pdf + '}'
-    with open(filename_report_pdf, 'wb') as pdf_file:
-        socket = urllib2.urlopen(url_report_pdf)
-        pdf_report = socket.read()
+    asset_path_and_id = normalize(a.attrib['href'])
+    asset_name = normalize(a.attrib['title'])
+    url_download = url_nh_base + asset_path_and_id
+    filename_download = '{0}{1}{2}.pdf'.format(download_path, os.sep, asset_name)
+    print '{0}] downloading to {1}'.format(i, filename_download)
+    print '   from {0}'.format(url_download)
+    sys.stdout.flush()
+    with open(filename_download, 'wb') as file_download:
+        socket = urllib2.urlopen(url_download)
+        content = socket.read()
         socket.close()
-        pdf_file.write(pdf_report)
-        pdf_file.close()
-        print '   stored locally {' + filename_report_pdf + '}'
+        file_download.write(content)
+        file_download.close()
 
 print
 print 'Creating ZIP archive'
-zip_archive_name = make_archive(archive_name, 'zip', '.', target_dir)
+sys.stdout.flush()
 
+os.chdir(download_root_path)
+zip_archive_name = make_archive(run_tag, 'zip', '.', run_tag)
 print '   {' + zip_archive_name + '}'
 print
-print 'TODO: upload archive'
-print
 print 'Done'
+sys.stdout.flush()

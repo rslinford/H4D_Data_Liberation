@@ -145,7 +145,5 @@ zip_archive_name = make_archive(archive_name, 'zip', '.', target_dir)
 
 print '   {' + zip_archive_name + '}'
 print
-# print 'TODO: upload archive'
-# print
 print 'Done'
 sys.stdout.flush()
