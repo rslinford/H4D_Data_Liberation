@@ -41,7 +41,6 @@ def normalize(a):
 
 right_now = time.time()
 current_timestamp = datetime.datetime.fromtimestamp(right_now).strftime('%Y-%m-%d_%H-%M-%S')
-current_username = os.environ.get('USERNAME')
 reporting_batch = 'blanks'
 run_tag = reporting_batch + '_' + current_timestamp
 download_root_path = '..{0}downloads'.format(os.sep)
@@ -111,9 +110,10 @@ for a in download_links:
     i += 1
     print
     asset_path_and_id = normalize(a.attrib['href'])
+    asset_id = asset_path_and_id.split('aspx?id=')[1]
     asset_name = normalize(a.attrib['title'])
     url_download = url_nh_base + asset_path_and_id
-    filename_download = '{0}{1}{2}.pdf'.format(download_path, os.sep, asset_name)
+    filename_download = '{0}{1}{2} id({3}).pdf'.format(download_path, os.sep, asset_name, asset_id)
     print '{0}] downloading to {1}'.format(i, filename_download)
     print '   from {0}'.format(url_download)
     sys.stdout.flush()
@@ -131,6 +131,20 @@ sys.stdout.flush()
 os.chdir(download_root_path)
 zip_archive_name = make_archive(run_tag, 'zip', '.', run_tag)
 print '   {' + zip_archive_name + '}'
+print "ZIP size", os.stat(zip_archive_name).st_size / 1024, "kB"
 print
+
+print 'Deleting unzipped files'
+sys.stdout.flush()
+byte_size_total = 0
+for f in os.listdir(run_tag):
+    fp = "{0}{1}{2}".format(run_tag, os.sep, f)
+    byte_size = os.stat(fp).st_size
+    byte_size_total += byte_size
+    print "  ", byte_size, 'bytes: ', f
+    os.remove(fp)
+os.rmdir(run_tag)
+print "Total removed", byte_size_total / 1024, "kB"
+
 print 'Done'
 sys.stdout.flush()
