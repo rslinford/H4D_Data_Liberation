@@ -1,0 +1,100 @@
+      65  tmp.txt
+			611 798
+			610 799
+			611 799
+			610 798
+			610 798
+			612 797
+			611 798
+			613 799
+			
+     104  pages-info.txt
+			0001 611 798
+			0002 610 799
+			0003 611 799
+			0004 610 798
+			0005 610 798
+			0006 612 797
+			0007 611 798
+			0008 613 799
+
+  463947  0001.orig-img-000.jpg
+  284140  0003.orig-img-000.jpg
+  303139  0005.orig-img-000.jpg
+  537576  0002.orig-img-000.jpg
+  303235  0007.orig-img-000.jpg
+  298355  0004.orig-img-000.jpg
+  311791  0006.orig-img-000.jpg
+  297135  0008.orig-img-000.jpg
+
+      33  0001.orig-img-info.txt
+			DPI=300
+			COLOR_SPACE=Gray
+			DEPTH=8
+      33  0002.orig-img-info.txt
+      33  0003.orig-img-info.txt
+      33  0004.orig-img-info.txt
+      33  0005.orig-img-info.txt
+      33  0006.orig-img-info.txt
+      33  0007.orig-img-info.txt
+      33  0008.orig-img-info.txt
+      
+ 8456273  0001.pgm
+ 8474081  0003.pgm
+ 8451383  0005.pgm
+ 8453729  0007.pgm
+ 8453924  0004.pgm
+ 8459006  0002.pgm
+ 8461925  0006.pgm
+ 8514053  0008.pgm
+ 8448842  0004.deskewed.pgm
+ 8459006  0002.deskewed.pgm
+ 8462142  0001.deskewed.pgm
+ 8448842  0005.deskewed.pgm
+ 8472322  0003.deskewed.pgm
+ 8466017  0006.deskewed.pgm
+ 8462142  0007.deskewed.pgm
+ 8502283  0008.deskewed.pgm
+ 8459029  0002.cleaned.pgm
+ 8448865  0004.cleaned.pgm
+ 8472345  0003.cleaned.pgm
+ 8462165  0001.cleaned.pgm
+ 8466040  0006.cleaned.pgm
+ 8448865  0005.cleaned.pgm
+ 8502306  0008.cleaned.pgm
+ 8462165  0007.cleaned.pgm
+
+   59916  0001.hocr
+ 1753319  0001.ocred.pdf
+   12768  0001.ocred.todebug.pdf
+
+   77319  0002.hocr
+ 2050271  0002.ocred.pdf
+   15402  0002.ocred.todebug.pdf
+
+   24367  0003.hocr
+  884870  0003.ocred.pdf
+    6632  0003.ocred.todebug.pdf
+
+   27174  0004.hocr
+  992024  0004.ocred.pdf
+    6984  0004.ocred.todebug.pdf
+
+   28986  0005.hocr
+ 1019047  0005.ocred.pdf
+    7058  0005.ocred.todebug.pdf
+
+   27534  0006.hocr
+ 1048282  0006.ocred.pdf
+    7092  0006.ocred.todebug.pdf
+
+   28899  0007.hocr
+  991004  0007.ocred.pdf
+    7218  0007.ocred.todebug.pdf
+
+   26645  0008.hocr
+ 1057985  0008.ocred.pdf
+    6823  0008.ocred.todebug.pdf
+ 
+    4526  pdf_validation.log
+
