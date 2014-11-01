@@ -37,13 +37,13 @@ Usage: OCRmyPDF.sh  [-h] [-v] [-g] [-k] [-d] [-c] [-i] [-o dpi] [-f] [-l languag
      - Do not delete the temporary files
 -d : Deskew each page before performing OCR
 -c : Clean each page before performing OCR
--i : Incorporate the cleaned image in the final PDF file (by default the original image	
+-i : Incorporate the cleaned image in the final PDF file (by default the original image
      image, or the deskewed image if the -d option is set)
--o : If the resolution of an image is lower than dpi value provided as argument, provide the OCR engine with 
+-o : If the resolution of an image is lower than dpi value provided as argument, provide the OCR engine with
      an oversampled image having the latter dpi value. This can improve the OCR results but can lead to a larger output PDF file.
      (default: no oversampling performed)
--f : Force to OCR the whole document, even if some page already contain font data 
-     (which should not be the case for PDF files built from scanned images) 
+-f : Force to OCR the whole document, even if some page already contain font data
+     (which should not be the case for PDF files built from scanned images)
 -l : Set the language of the PDF file in order to improve OCR results (default "eng")
      Any language supported by tesseract is supported (Tesseract uses 3-character ISO 639-2 language codes)
      Multiple languages may be specified, separated by '+' characters.
@@ -51,7 +51,7 @@ Usage: OCRmyPDF.sh  [-h] [-v] [-g] [-k] [-d] [-c] [-i] [-o dpi] [-f] [-l languag
      (this option can be used more than once)
      Note 1: The configuration file must be available in the "tessdata/configs" folder of your tesseract installation
 inputfile  : PDF file to be OCRed
-outputfile : The PDF/A file that will be generated 
+outputfile : The PDF/A file that will be generated
 --------------------------------------------------------------------------------------
 EOF
 }
@@ -63,9 +63,9 @@ EOF
 # Param1 : Relative path
 # Returns: 1 if the folder in which the file is located does not exist
 #          0 otherwise
-################################################# 
+#################################################
 absolutePath() {
-	local wdsave absolutepath 
+	local wdsave absolutepath
 	wdsave="$(pwd)"
 	! cd "$(dirname "$1")" 1> /dev/null 2> /dev/null && return 1
 	absolutepath="$(pwd)/$(basename "$1")"
@@ -230,7 +230,7 @@ done
 # But in Linux '-t template' is handled differently than in FreeBSD
 # Therefore different calls must be used for Linux and for FreeBSD
 prefix="$(date +"%Y%m%d_%H%M").filename.$(basename "$FILE_INPUT_PDF" | sed 's/[.][^.]*$//')"	# prefix made of date, time and pdf file name without extension
-TMP_FLD=`mktemp -d 2>/dev/null || mktemp -d -t "${prefix}" 2>/dev/null`				# try Linux syntax first, if it fails try FreeBSD/OSX			
+TMP_FLD=`mktemp -d 2>/dev/null || mktemp -d -t "${prefix}" 2>/dev/null`				# try Linux syntax first, if it fails try FreeBSD/OSX
 if [ $? -ne 0 ]; then
 	if [ -z "$TMPDIR" ]; then
 		echo "Could not create folder for temporary files. Please ensure you have sufficient right and \"/tmp\" exists"
@@ -260,17 +260,17 @@ parallel --gnu -q -k --halt-on-error 1 "$OCR_PAGE" "$FILE_INPUT_PDF" "{}" "$nump
 	"$VERBOSITY" "$LAN" "$KEEP_TMP" "$PREPROCESS_DESKEW" "$PREPROCESS_CLEAN" "$PREPROCESS_CLEANTOPDF" "$OVERSAMPLING_DPI" \
 	"$PDF_NOIMG" "$TESS_CFG_FILES" "$FORCE_OCR" < "$FILE_PAGES_INFO"
 ret_code="$?"
-[ $ret_code -ne 0 ] && exit $ret_code 
+[ $ret_code -ne 0 ] && mv "$FILE_INPUT_PDF" "$FILE_OUTPUT_PDFA" && exit $ret_code
 
 # concatenate all pages and convert the pdf file to match PDF/A format
-[ $VERBOSITY -ge $LOG_DEBUG ] && echo "Output file: Concatenating all pages to the final PDF/A file" 
+[ $VERBOSITY -ge $LOG_DEBUG ] && echo "Output file: Concatenating all pages to the final PDF/A file"
 ! gs -dQUIET -dPDFA -dBATCH -dNOPAUSE -dUseCIEColor \
 	-sProcessColorModel=DeviceCMYK -sDEVICE=pdfwrite -sPDFACompatibilityPolicy=2 \
 	-sOutputFile="$FILE_OUTPUT_PDFA" "${TMP_FLD}/"*ocred*.pdf 1> /dev/null 2> /dev/null \
 	&& echo "Could not concatenate all pages to the final PDF/A file. Exiting..." && exit $EXIT_OTHER_ERROR
 
 # validate generated pdf file (compliance to PDF/A)
-[ $VERBOSITY -ge $LOG_DEBUG ] && echo "Output file: Checking compliance to PDF/A standard" 
+[ $VERBOSITY -ge $LOG_DEBUG ] && echo "Output file: Checking compliance to PDF/A standard"
 ! java -jar "$JHOVE" -c "$JHOVE_CFG" -m PDF-hul "$FILE_OUTPUT_PDFA" 2> /dev/null 1> "$FILE_VALIDATION_LOG" \
 	&& echo "Unexpected error while checking compliance to PDF/A file. Exiting..." && exit $EXIT_OTHER_ERROR
 grep -i "Status|Message" "$FILE_VALIDATION_LOG" # summary of the validation
