@@ -203,13 +203,13 @@ else
 	image4finalPDF="$curImgPixmapDeskewed"	
 fi
 [ $VERBOSITY -ge $LOG_DEBUG ] && echo "Page $page: Embedding text in PDF"
-! python2 $SRC/hocrTransform.py -r $dpi -i "$image4finalPDF" "$curHocr" "$curOCRedPDF" \
+! python2 $SRC/HocrTransform.py -r $dpi -i "$image4finalPDF" "$curHocr" "$curOCRedPDF" \
 	&& echo "Could not create PDF file from \"$curHocr\". Exiting..." && exit $EXIT_OTHER_ERROR
 
 # if requested generate special debug PDF page with visible OCR text
 if [ $PDF_NOIMG -eq "1" ] ; then
 	[ $VERBOSITY -ge $LOG_DEBUG ] && echo "Page $page: Embedding text in PDF (debug page)"
-	! python2 $SRC/hocrTransform.py -b -r $dpi "$curHocr" "$curOCRedPDFDebug" \
+	! python2 $SRC/HocrTransform.py -b -r $dpi "$curHocr" "$curOCRedPDFDebug" \
 		&& echo "Could not create PDF file from \"$curHocr\". Exiting..." && exit $EXIT_OTHER_ERROR	
 fi
 
