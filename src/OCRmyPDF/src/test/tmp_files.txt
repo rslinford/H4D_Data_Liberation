@@ -1,3 +1,27 @@
+
+
+SOURCEDIR="spin_2001-10000_2014-10-29"
+TARGETDIR="${SOURCEDIR}_searchable"
+
+/bin/bash ./ocrallcmd.sh ${SOURCEDIR}
+
+find . -name "*.pdf" -exec ../../OCRmyPDF-2.2-stable/OCRmyPDF.sh -vvv -o 300 -d -c -i -C pdfgeneral {} ../${TARGETDIR}/{} \;
+PDFFILE="./spin_id(7741)_Wyeth Good Government Fund.pdf"
+
+../../OCRmyPDF-2.2-stable/OCRmyPDF.sh -vvv -o 300 -d -c -i -C pdfgeneral ./${PDFFILE} ../${TARGETDIR}/./${PDFFILE}
+	TMPDIR="/tmp/tmp.iNFYMa98U9"
+
+perl /usr/bin/parallel --gnu -q -k --halt-on-error 1 ./src/ocrPage.sh /home/rslinford/Documents/H4D/spin/${SOURCEDIR}/${PDFFILE} {} 0002 ${TMPDIR} 3 eng 0 1 1 1 300 0 pdfgeneral  0
+
+./src/ocrPage.sh /home/rslinford/Documents/H4D/spin/${SOURCEDIR}/${PDFFILE} 0019 774 610 0029 ${TMPDIR} 3 eng 0 1 1 1 300 0 pdfgeneral  0
+
+convert ${TMPDIR}/0001.pbm -deskew 40% -gravity center -extent 2541x3204 ${TMPDIR}/0001.deskewed.pbm
+unpaper --dpi 300 --mask-scan-size 100 --no-deskew --no-grayfilter --no-blackfilter --no-mask-center --no-border-align ${TMPDIR}/0001.deskewed.pbm ${TMPDIR}/0001.cleaned.pbm
+tesseract -l eng ${TMPDIR}/0001.cleaned.pbm ${TMPDIR}/0001.hocr hocr pdfgeneral
+python2 ./src/HocrTransform.py -r 300 -i ${TMPDIR}/0001.cleaned.pbm ${TMPDIR}/0001.hocr
+
+Size      Filename
+========  =====================
       65  tmp.txt
 			611 798
 			610 799
@@ -97,4 +121,3 @@
     6823  0008.ocred.todebug.pdf
  
     4526  pdf_validation.log
-

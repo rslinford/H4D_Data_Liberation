@@ -16,7 +16,6 @@ def isinstance_string(x):
     # but would miss type 'unicode' which can occur in Python 2.7
     if isinstance(x, str):
         return True
-
     # Type 'basestring' catches both 'str' and 'unicode' in Python 2.7
     # but doesn't exist in Python 3 and throws a NameError.
     try:
@@ -24,17 +23,14 @@ def isinstance_string(x):
             return True
     except NameError:
         pass
-
     return False
 
 
 def normalize(a):
     if not a:
         return ''
-
     if isinstance_string(a):
         return a.encode('utf8').strip()
-
     return a[0].encode('utf8').strip()
 
 
