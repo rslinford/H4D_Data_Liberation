@@ -1,13 +1,15 @@
-import csv
-import os
-
-
 """
 Target download directory {lobbyists-2013-batch_crawled-2014-10-18_16-56-15_by-rslinford}
 Section Menu at {http://sos.nh.gov/Lob012914A.aspx}
 """
 
-de = [
+import csv
+import os
+import re
+import subprocess
+
+
+de = (
     {
         'dn': 'Abbott, Gary(Associated General Contractors of NH)',
         'wp': 'http://sos.nh.gov/Lob012914A.aspx?id=52135',
@@ -5120,16 +5122,174 @@ de = [
         'oa': 'http://sos.nh.gov/assets/0/103/105/1601/1922/2129/2460/2480/792e0f90-4a61-47cd-983e-52bdd2743c53.pdf',
         'da': 'Zeytoonjian, Fred(Apple Inc).pdf'
     }
-]
+)
 
-csv_output_filename = '../reports/dist/lobbyist-2013-report.csv'
-searchable_base_dir = '../reports/dist/lobbyists-2013-searchable'
-ds = os.listdir(searchable_base_dir)
-print 'Number of reports', len(de)
-print 'Local searchables', len(ds)
-with open(csv_output_filename, 'wb') as ofile:
-    csv_writer = csv.writer(ofile, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
-    for e in de:
-        searchable_filename = '{0}{1}{2}'.format(searchable_base_dir, os.sep, e['da'])
-        print searchable_filename
-        csv_writer.writerow([e['dn'], e['wp'], e['oa']])
+"""
+Addendum A - Page 1
+X,Y Coordinates of Dollar amounts on the page
+
+IV. Fees Received
+a) <span class='ocrx_word' id='word_1_146' title='bbox 2059 1407 2219 1442; x_wconf 87' lang='eng'><strong>15,000.00</strong></span>
+b) <span class='ocrx_word' id='word_1_175' title='bbox 2053 1553 2219 1586; x_wconf 79' lang='eng'><strong>45,300.00</strong></span>
+c) <span class='ocrx_word' id='word_1_191' title='bbox 2055 1700 2219 1735; x_wconf 90' lang='eng'><strong>60,300.00</strong></span>
+d) <span class='ocrx_word' id='word_1_211' title='bbox 2077 1846 2220 1881; x_wconf 89' lang='eng'><strong>5,000.00</strong></span>
+
+V. Expenses
+a) <span class='ocrx_word' id='word_1_479' title='bbox 2014 2809 2173 2843; x_wconf 91' lang='eng'><strong>15,000.00</strong></span>
+b) <span class='ocrx_word' id='word_1_499' title='bbox 2127 2955 2174 2984; x_wconf 91' lang='eng'><strong>.00</strong></span>
+c) <span class='ocrx_word' id='word_1_514' title='bbox 2127 3053 2174 3082; x_wconf 94' lang='eng'><strong>.00</strong></span>
+"""
+
+"""
+Commands and their Params
+
+pdftoppm -f 1 -l 1 -r 300 -gray SOME.pdf RESULT
+
+    -gray creates gray scaled image with a .pgm extension; without -gray it defaults to color with a .ppm extension
+
+unpaper --dpi 300 --mask-scan-size 100 --no-deskew --no-grayfilter --no-blackfilter --no-mask-center
+    --no-border-align SOURCE.pgm TARGET.pgm
+
+unpaper --dpi 300 --mask-scan-size 100 --no-border-align AAA BBB
+
+unpaper -vv --pre-border 100,200,100,100 --deskew-scan-depth 1 --deskew-scan-direction left,top,bottom --deskew-scan-step 0.01 [SOURCE].pgm [TARGET].pgm
+
+tesseract IMAGE OUTPUT -l eng [hocr] [myconfig1]
+
+'pnmtopng', '-compression', '9', 'wor-1.pgm', '>', 'wor-1.png'
+
+"""
+
+# TODO: move to util package
+box_pattern = re.compile('bbox((\s+\d+){4})')
+
+
+def element_coordinates(element):
+    out = (0, 0, 0, 0)
+    if 'title' in element.attrib:
+        matches = box_pattern.search(element.attrib['title'])
+        if matches:
+            coords = matches.group(1).split()
+            out = (int(coords[0]), int(coords[1]), int(coords[2]), int(coords[3]))
+    return out
+
+
+"""
+Base all paths on project_dir. And project_dir is a fully qualified path.
+"""
+project_dir = os.path.normpath(os.path.join(os.getcwd(), '..'))
+
+pdf_base_dir = os.path.join(project_dir, 'reports/dist/lobbyists-2013-original')
+extract_base_dir = os.path.join(project_dir, 'reports/dist/extract')
+csv_output_filename = os.path.join(extract_base_dir, 'lobbyist-2013-extract.csv')
+
+# Give each entry an index number
+dei = zip(range(0, len(de)), de)
+print 'Number of reports', len(dei)
+print 'Local PDFs', len(os.listdir(pdf_base_dir))
+with open(csv_output_filename, 'ab') as ofile:
+    csv_column_names = ('row-num', 'message', 'page-count', 'display-name', 'web-page', 'original-asset')
+    csv_writer = csv.DictWriter(ofile, csv_column_names, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+    csv_writer.writeheader()
+    csv_blank_tuple = (None, None, None, None, None, None)
+    csv_row = dict(zip(csv_column_names, csv_blank_tuple))
+    for de in dei[:]:
+        if csv_row['row-num'] is not None:
+            csv_writer.writerow(csv_row)
+        row_num = de[0]
+        e = de[1]
+        csv_row = dict(zip(csv_column_names, (row_num, None, None, e['dn'], e['wp'], e['oa'])))
+        pdf_file = os.path.join(pdf_base_dir, e['da'])
+        main_loop_tag = '{0}] pdf({1})'.format(row_num, e['da'])
+        if os.path.isfile(pdf_file):
+            print '{0} Starting analysis: {1}'.format(main_loop_tag, pdf_file)
+        else:
+            csv_row['message'] = '{0} Local PDF not found'.format(main_loop_tag)
+            print '{0} file: {1}'.format(csv_row['message'], pdf_file)
+            continue
+        row_num_padded = '{0:0>4}'.format(row_num)
+        work_dir = os.path.join(extract_base_dir, row_num_padded)
+        while os.path.exists(work_dir):
+            temp = work_dir.rsplit(row_num_padded, 1)
+            if temp[1] == '':
+                n = 0
+            else:
+                n = int(temp[1].split('_', 1)) + 1
+            work_dir = os.path.join(extract_base_dir, '{0}_{1}'.format(row_num_padded, n))
+        if not os.path.isdir(work_dir):
+            os.mkdir(work_dir)
+        ppm_ext = '.pgm'
+        pdf_to_image_cmd = ['pdftoppm', '-r', '300', '-gray', pdf_file, 'page']
+        # pdf_to_image_cmd = ['pdftoppm', '-f', '1', '-l', '3', '-r', '300', '-gray', pdf_file, 'page']
+        result_code = subprocess.call(pdf_to_image_cmd, cwd=work_dir)
+        if 0 != result_code:
+            csv_row['message'] = '{0} Error extracting images. Command {1} returned error code {2}'.format(
+                main_loop_tag, pdf_to_image_cmd[0], result_code)
+            print '{0} cmd: {1}'.format(csv_row['message'], pdf_to_image_cmd)
+            continue
+        csv_row['page-count'] = len(os.listdir(work_dir))
+        print '{0} {1} image files extracted'.format(main_loop_tag, csv_row['page-count'])
+        # TODO: factor out into option
+        # Only process report with 3 pages
+        if csv_row['page-count'] != 3:
+            print "{0} skipping report because there aren't 3 pages".format(main_loop_tag)
+            # clean up
+            for f in os.listdir(work_dir):
+                os.unlink(os.path.join(work_dir, f))
+            os.rmdir(work_dir)
+            continue
+        for f in os.listdir(work_dir):
+            temp = f.rsplit(ppm_ext, 1)
+            if len(temp) != 2 or temp[1] != '':
+                continue
+            file_stem = temp[0]
+            clean_file_stem = file_stem + '_clean'
+            clean_file_name = clean_file_stem + ppm_ext
+            print '{0} Cleaning {1} to {2}'.format(main_loop_tag, f, clean_file_name)
+            clean_cmd = ['unpaper', '-v', '--pre-border', '100,120,70,70', '--mask', '50,50,2500,3250', '--deskew-scan-size', '2100', '--deskew-scan-depth', '0.9', '--deskew-scan-direction', 'left',
+                         '--deskew-scan-step', '0.01', os.path.join(work_dir, f), os.path.join(work_dir, clean_file_name)]
+            # clean_cmd = ['unpaper', '-vv', '--dpi', '300', '--mask-scan-size', '100', '--no-border-align', os.path.join(work_dir, f), os.path.join(work_dir, clean_file_name)]
+            result_code = subprocess.call(clean_cmd, cwd=work_dir)
+            if 0 != result_code:
+                csv_row['message'] = '{0} Error cleaning image. Command {1} returned error code {2}'.format(main_loop_tag, clean_cmd[0], result_code)
+                print '{0} cmd: {1}'.format(csv_row['message'], clean_cmd)
+                continue
+            ocr_cmd = ['tesseract', os.path.join(work_dir, clean_file_name), clean_file_stem, '-l', 'eng', 'hocr', 'pdfgeneral']
+            result_code = subprocess.call(ocr_cmd, cwd=work_dir)
+            if 0 != result_code:
+                csv_row['message'] = '{0} Error during OCR of image {1}. Command {2} returned error code {3}'.format(main_loop_tag, f, ocr_cmd[0], result_code)
+                print '{0} cmd: {1}'.format(csv_row['message'], clean_cmd)
+                continue
+            ocr_cmd = ['tesseract', os.path.join(work_dir, clean_file_name), clean_file_stem + 'p', '-l', 'eng', 'pdfgeneral']
+            result_code = subprocess.call(ocr_cmd, cwd=work_dir)
+            if 0 != result_code:
+                csv_row['message'] = '{0} Error during OCR of image {1}. Command {2} returned error code {3}'.format(main_loop_tag, f, ocr_cmd[0], result_code)
+                print '{0} cmd: {1}'.format(csv_row['message'], clean_cmd)
+                continue
+                # ocr_cmd = ['tesseract', os.path.join(work_dir, clean_file_name), clean_file_stem + 'd', '-l', 'eng', 'myconfigd']
+                # result_code = subprocess.call(ocr_cmd, cwd=work_dir)
+                # if 0 != result_code:
+                # csv_row['message'] = '{0} Error during OCR of image {1}. Command {2} returned error code {3}'.format(
+                # main_loop_tag, f, ocr_cmd[0], result_code)
+                #     print '{0} cmd: {1}'.format(csv_row['message'], clean_cmd)
+                #     continue
+
+        # Convert images to PNGs
+        # TODO: factor out into method
+        for f in os.listdir(work_dir):
+            temp = f.rsplit(ppm_ext, 1)
+            if len(temp) != 2 or temp[1] != '':
+                continue
+            file_stem = temp[0]
+            convert_cmd = ['pnmtopng', '-compression', '9', f]
+            with open(os.path.join(work_dir, '{0}.png'.format(file_stem)), 'wb') as ostream:
+                result_code = subprocess.call(convert_cmd, cwd=work_dir, stdout=ostream)
+            if 0 != result_code:
+                csv_row['message'] = '{0} Error during convert to png {1}. Command {2} returned error code {3}'.format(main_loop_tag, f, convert_cmd[0], result_code)
+                print '{0} cmd: {1}'.format(csv_row['message'], clean_cmd)
+            else:
+                os.unlink(os.path.join(work_dir, f))
+
+        csv_row['message'] = 'OK'
+        csv_writer.writerow(csv_row)
+        csv_row = dict(zip(csv_column_names, csv_blank_tuple))
