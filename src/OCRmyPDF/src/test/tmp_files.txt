@@ -121,3 +121,15 @@ Size      Filename
     6823  0008.ocred.todebug.pdf
  
     4526  pdf_validation.log
+
+
+<span class='ocrx_word' id='word_1_146' title='bbox 2059 1407 2219 1442; x_wconf 87' lang='eng'><strong>15,000.00</strong></span>     
+<span class='ocrx_word' id='word_1_175' title='bbox 2053 1553 2219 1586; x_wconf 79' lang='eng'><strong>45,300.00</strong></span>
+<span class='ocrx_word' id='word_1_191' title='bbox 2055 1700 2219 1735; x_wconf 90' lang='eng'><strong>60,300.00</strong></span> 
+
+<span class='ocrx_word' id='word_1_211' title='bbox 2077 1846 2220 1881; x_wconf 89' lang='eng'><strong>5,000.00</strong></span>
+
+<span class='ocrx_word' id='word_1_479' title='bbox 2014 2809 2173 2843; x_wconf 91' lang='eng'><strong>15,000.00</strong></span>
+<span class='ocrx_word' id='word_1_499' title='bbox 2127 2955 2174 2984; x_wconf 91' lang='eng'><strong>.00</strong></span>
+<span class='ocrx_word' id='word_1_514' title='bbox 2127 3053 2174 3082; x_wconf 94' lang='eng'><strong>.00</strong></span> 
+
