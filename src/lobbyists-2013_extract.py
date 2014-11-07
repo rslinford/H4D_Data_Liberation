@@ -5188,17 +5188,22 @@ dei = zip(range(0, len(de)), de)
 print 'Number of reports', len(dei)
 print 'Local PDFs', len(os.listdir(pdf_base_dir))
 with open(csv_output_filename, 'ab') as ofile:
-    csv_column_names = ('row-num', 'message', 'page-count', 'display-name', 'web-page', 'original-asset')
+    csv_column_names = ('row', 'web-page', 'page-count', 'original-asset', 'display-name', 'lobbyist', 'client', 'message')
     csv_writer = csv.DictWriter(ofile, csv_column_names, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
     csv_writer.writeheader()
     csv_blank_tuple = (None, None, None, None, None, None)
     csv_row = dict(zip(csv_column_names, csv_blank_tuple))
     for de in dei[:]:
-        if csv_row['row-num'] is not None:
+        if csv_row['row'] is not None:
             csv_writer.writerow(csv_row)
         row_num = de[0]
         e = de[1]
-        csv_row = dict(zip(csv_column_names, (row_num, None, None, e['dn'], e['wp'], e['oa'])))
+        # Display Name contains the principal Lobbyist and name of his/her Client e.g. 'Lobbyist Name(Client Name)'
+        dn = e['dn'].rsplit(')', 1)[0].split('(', 1)
+        # Web Page pages are alphabetic, e.g., A or Ba to Bi
+        wp = '=HYPERLINK("{0}", "{1}")'.format(e['wp'], e['wp'].split('http://sos.nh.gov/Lob012914', 1)[1].split('.aspx')[0])
+        oa = '=HYPERLINK("{0}", "{1}")'.format(e['oa'], '{0}')
+        csv_row = dict(zip(csv_column_names, (row_num, wp, None, oa, e['dn'], dn[0], dn[1], None)))
         pdf_file = os.path.join(pdf_base_dir, e['da'])
         main_loop_tag = '{0}] pdf({1})'.format(row_num, e['da'])
         if os.path.isfile(pdf_file):
@@ -5228,6 +5233,7 @@ with open(csv_output_filename, 'ab') as ofile:
             print '{0} cmd: {1}'.format(csv_row['message'], pdf_to_image_cmd)
             continue
         csv_row['page-count'] = len(os.listdir(work_dir))
+        csv_row['original-asset'] = csv_row['original-asset'].format(len(os.listdir(work_dir)))
         print '{0} {1} image files extracted'.format(main_loop_tag, csv_row['page-count'])
         # TODO: factor out into option
         # Only process report with 3 pages
