@@ -19,8 +19,8 @@ xpath_section_query: query returns list all section_list links
     <a title="U-V" href="/Lob012914UZ.aspx">U-V</a>
 """
 
-from lxml import etree
 import os
+from lxml import etree
 from shutil import make_archive
 import time
 import datetime

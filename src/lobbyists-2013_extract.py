@@ -5292,10 +5292,11 @@ with open(csv_output_filename, 'ab') as ofile:
                 result_code = subprocess.call(convert_cmd, cwd=work_dir, stdout=ostream)
             if 0 != result_code:
                 csv_row['message'] = '{0} Error during convert to png {1}. Command {2} returned error code {3}'.format(main_loop_tag, f, convert_cmd[0], result_code)
-                print '{0} cmd: {1}'.format(csv_row['message'], clean_cmd)
+                print '{0} cmd: {1}'.format(csv_row['message'], convert_cmd)
             else:
                 os.unlink(os.path.join(work_dir, f))
 
         csv_row['message'] = 'OK'
         csv_writer.writerow(csv_row)
+        ofile.flush()
         csv_row = dict(zip(csv_column_names, csv_blank_tuple))
