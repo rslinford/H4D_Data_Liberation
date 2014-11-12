@@ -15,46 +15,27 @@ import sys
 import argparse
 
 
-class HocrTransform():
+class HocrTransform2():
     """
     A class for converting documents from the hOCR format.
     For details of the hOCR format, see:
     http://docs.google.com/View?docid=dfxcv4vc_67g844kf
     """
 
-    def __init__(self, hocrFileName, dpi):
-        self.dpi = dpi
-        self.boxPattern = re.compile('bbox((\s+\d+){4})')
+    boxPattern = re.compile('bbox((\s+\d+){4})')
+    namespacePattern = re.compile('({.*})html')
 
-        self.hocr = ElementTree.ElementTree()
-        self.hocr.parse(hocrFileName)
+    def __init__(self):
+        pass
 
-        # if the hOCR file has a namespace, ElementTree requires its use to find elements
-        matches = re.match('({.*})html', self.hocr.getroot().tag)
-        self.xmlns = ''
-        if matches:
-            self.xmlns = matches.group(1)
-
-        # get dimension in pt (not pixel!!!!) of the OCRed image
-        self.width, self.height = None, None
-        for div in self.hocr.findall(".//%sdiv[@class='ocr_page']" % (self.xmlns)):
-            coords = self.element_coordinates(div)
-            self.width = self.px2pt(coords[2] - coords[0])
-            self.height = self.px2pt(coords[3] - coords[1])
-            break  # there shouldn't be more than one, and if there is, we don't want it
-
-        # no width and heigh definition in the ocr_image element of the hocr file
-        if self.width is None:
-            print("No page dimension found in the hocr file")
-            sys.exit(1)
-
-    def __str__(self):
+    def __str__(self, hocr):
         """
         Return the textual content of the HTML body
         """
-        if self.hocr is None:
+        if hocr is None:
             return ''
-        body = self.hocr.find(".//%sbody" % self.xmlns)
+        xmlns = HocrTransform2.lookup_namespace()
+        body = hocr.find(".//%sbody" % xmlns)
         if body:
             return self._get_element_text(body).encode('utf-8')  # XML gives unicode
         else:
@@ -80,31 +61,49 @@ class HocrTransform():
         """
         out = (0, 0, 0, 0)
         if 'title' in element.attrib:
-            matches = self.boxPattern.search(element.attrib['title'])
+            matches = HocrTransform2.boxPattern.search(element.attrib['title'])
             if matches:
                 coords = matches.group(1).split()
                 out = (int(coords[0]), int(coords[1]), int(coords[2]), int(coords[3]))
         return out
 
-    def px2pt(self, pxl):
+    @staticmethod
+    def px2pt(pxl, dpi):
         """
         Returns the length in pt given length in pxl
         """
-        return float(pxl) / self.dpi * inch
+        return float(pxl) / dpi * inch
 
     @staticmethod
-    def replace_unsupported_chars(str):
+    def replace_unsupported_chars(string_thing):
         """
         Given an input string, returns the corresponding string that:
         - is available in the helvetica facetype
         - does not contain any ligature (to allow easy search in the PDF file)
       """
         # The 'u' before the character to replace indicates that it is a unicode character
-        str = str.replace(u"ﬂ", "fl")
-        str = str.replace(u"ﬁ", "fi")
-        return str
+        string_thing = string_thing.replace(u"ﬂ", "fl")
+        string_thing = string_thing.replace(u"ﬁ", "fi")
+        return string_thing
 
-    def to_pdf(self, outFileName, imageFileName, showBoundingboxes, fontname="Helvetica"):
+    def coordinates(self, coords, dpi):
+        x1 = self.px2pt(coords[0], dpi)
+        y1 = self.px2pt(coords[1], dpi)
+        x2 = self.px2pt(coords[2], dpi)
+        y2 = self.px2pt(coords[3], dpi)
+        return x1, y1, x2, y2
+
+    @staticmethod
+    def lookup_namespace(hocr):
+        # if the hOCR file has a namespace, ElementTree requires its use to find elements
+        matches = HocrTransform2.namespacePattern.search(hocr.getroot().tag)
+        xmlns = ''
+        if matches:
+            xmlns = matches.group(1)
+
+        return xmlns
+
+    def to_pdf(self, outFileName, imageFileName, showBoundingboxes, hocrfile, dpi, fontname="Helvetica"):
         """
         Creates a PDF file with an image superimposed on top of the text.
         Text is positioned according to the bounding box of the lines in
@@ -112,33 +111,51 @@ class HocrTransform():
         The image need not be identical to the image used to create the hOCR file.
         It can have a lower resolution, different color mode, etc.
         """
+
+        # con
+        hocr = ElementTree.ElementTree()
+        hocr.parse(hocrfile)
+
+        xmlns = self.lookup_namespace(hocr)
+
+        # get dimension in pt (not pixel!!!!) of the OCRed image
+        width, height = None, None
+        for div in hocr.findall(".//%sdiv[@class='ocr_page']" % (xmlns)):
+            coords = self.element_coordinates(div)
+            width = HocrTransform2.px2pt(coords[2] - coords[0], dpi)
+            height = HocrTransform2.px2pt(coords[3] - coords[1], dpi)
+            break  # there shouldn't be more than one, and if there is, we don't want it
+
+        # no width and heigh definition in the ocr_image element of the hocr file
+        if width is None:
+            print("No page dimension found in the hocr file")
+            sys.exit(1)
+        # end con
+
         # create the PDF file
-        pdf = Canvas(outFileName, pagesize=(self.width, self.height), pageCompression=1)  # page size in points (1/72 in.)
+        pdf = Canvas(outFileName, pagesize=(width, height), pageCompression=1)  # page size in points (1/72 in.)
 
         # draw bounding box for each paragraph
         pdf.setStrokeColorRGB(0, 1, 1)  # light blue for bounding box of paragraph
         pdf.setFillColorRGB(0, 1, 1)  # light blue for bounding box of paragraph
         pdf.setLineWidth(0)  # no line for bounding box
-        for elem in self.hocr.findall(".//%sp[@class='%s']" % (self.xmlns, "ocr_par")):
+        for elem in hocr.findall(".//%sp[@class='%s']" % (xmlns, "ocr_par")):
 
             elemtxt = self._get_element_text(elem).rstrip()
             if len(elemtxt) == 0:
                 continue
 
             coords = self.element_coordinates(elem)
-            x1 = self.px2pt(coords[0])
-            y1 = self.px2pt(coords[1])
-            x2 = self.px2pt(coords[2])
-            y2 = self.px2pt(coords[3])
+            x1, y1, x2, y2 = self.coordinates(coords, dpi)
 
             # draw the bbox border
             if showBoundingboxes:
-                pdf.rect(x1, self.height - y2, x2 - x1, y2 - y1, fill=1)
+                pdf.rect(x1, height - y2, x2 - x1, y2 - y1, fill=1)
 
         # check if element with class 'ocrx_word' are available
         # otherwise use 'ocr_line' as fallback
         elemclass = "ocr_line"
-        if self.hocr.find(".//%sspan[@class='ocrx_word']" % (self.xmlns)) is not None:
+        if hocr.find(".//%sspan[@class='ocrx_word']" % xmlns) is not None:
             elemclass = "ocrx_word"
 
         # itterate all text elements
@@ -146,28 +163,25 @@ class HocrTransform():
         pdf.setLineWidth(0.5)  # bounding box line width
         pdf.setDash(6, 3)  # bounding box is dashed
         pdf.setFillColorRGB(0, 0, 0)  # text in black
-        for elem in self.hocr.findall(".//%sspan[@class='%s']" % (self.xmlns, elemclass)):
+        for elem in hocr.findall(".//%sspan[@class='%s']" % (xmlns, elemclass)):
             elemtxt = self._get_element_text(elem).rstrip()
             elemtxt = self.replace_unsupported_chars(elemtxt)
             if len(elemtxt) == 0:
                 continue
 
             coords = self.element_coordinates(elem)
-            x1 = self.px2pt(coords[0])
-            y1 = self.px2pt(coords[1])
-            x2 = self.px2pt(coords[2])
-            y2 = self.px2pt(coords[3])
+            x1, y1, x2, y2 = HocrTransform2.coordinates(coords, dpi)
 
             # draw the bbox border
             if showBoundingboxes:
-                pdf.rect(x1, self.height - y2, x2 - x1, y2 - y1, fill=0)
+                pdf.rect(x1, height - y2, x2 - x1, y2 - y1, fill=0)
 
             text = pdf.beginText()
             fontsize = self.px2pt(coords[3] - coords[1])
             text.setFont(fontname, fontsize)
 
             # set cursor to bottom left corner of bbox (adjust for dpi)
-            text.setTextOrigin(x1, self.height - y2)
+            text.setTextOrigin(x1, height - y2)
 
             # scale the width of the text to fill the width of the bbox
             text.setHorizScale(100 * (x2 - x1) / pdf.stringWidth(elemtxt, fontname, fontsize))
@@ -179,7 +193,7 @@ class HocrTransform():
         # put the image on the page, scaled to fill the page
         if imageFileName is not None:
             im = Image.open(imageFileName)
-            pdf.drawInlineImage(im, 0, 0, width=self.width, height=self.height)
+            pdf.drawInlineImage(im, 0, 0, width=width, height=height)
 
         # finish up the page and save it
         pdf.showPage()
@@ -195,5 +209,5 @@ if __name__ == "__main__":
     parser.add_argument('outputfile', help='Path to the PDF file to be generated')
     args = parser.parse_args()
 
-    hocr = HocrTransform(args.hocrfile, args.resolution)
-    hocr.to_pdf(args.outputfile, args.image, args.boundingboxes)
+    hocr = HocrTransform2()
+    hocr.to_pdf(args.outputfile, args.image, args.boundingboxes, args.hocrfile, args.resolution)
