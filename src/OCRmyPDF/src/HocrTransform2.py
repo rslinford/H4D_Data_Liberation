@@ -80,17 +80,22 @@ class HocrTransform2():
         Given an input string, returns the corresponding string that:
         - is available in the helvetica facetype
         - does not contain any ligature (to allow easy search in the PDF file)
-      """
+        """
         # The 'u' before the character to replace indicates that it is a unicode character
         string_thing = string_thing.replace(u"ﬂ", "fl")
         string_thing = string_thing.replace(u"ﬁ", "fi")
         return string_thing
 
-    def coordinates(self, coords, dpi):
-        x1 = self.px2pt(coords[0], dpi)
-        y1 = self.px2pt(coords[1], dpi)
-        x2 = self.px2pt(coords[2], dpi)
-        y2 = self.px2pt(coords[3], dpi)
+    @staticmethod
+    def coordinates(box_coordinates, dpi):
+        """
+
+        :rtype : list[4]
+        """
+        x1 = HocrTransform2.px2pt(box_coordinates[0], dpi)
+        y1 = HocrTransform2.px2pt(box_coordinates[1], dpi)
+        x2 = HocrTransform2.px2pt(box_coordinates[2], dpi)
+        y2 = HocrTransform2.px2pt(box_coordinates[3], dpi)
         return x1, y1, x2, y2
 
     @staticmethod
@@ -103,7 +108,7 @@ class HocrTransform2():
 
         return xmlns
 
-    def to_pdf(self, outFileName, imageFileName, showBoundingboxes, hocrfile, dpi, fontname="Helvetica"):
+    def to_pdf(self, out_filename, image_filename, show_bounding_boxes, hocr_file, dpi, font_name="Helvetica"):
         """
         Creates a PDF file with an image superimposed on top of the text.
         Text is positioned according to the bounding box of the lines in
@@ -112,9 +117,9 @@ class HocrTransform2():
         It can have a lower resolution, different color mode, etc.
         """
 
-        # con
+        # constructor stuff
         hocr = ElementTree.ElementTree()
-        hocr.parse(hocrfile)
+        hocr.parse(hocr_file)
 
         xmlns = self.lookup_namespace(hocr)
 
@@ -130,10 +135,10 @@ class HocrTransform2():
         if width is None:
             print("No page dimension found in the hocr file")
             sys.exit(1)
-        # end con
+        # end constructor stuff
 
         # create the PDF file
-        pdf = Canvas(outFileName, pagesize=(width, height), pageCompression=1)  # page size in points (1/72 in.)
+        pdf = Canvas(out_filename, pagesize=(width, height), pageCompression=1)  # page size in points (1/72 in.)
 
         # draw bounding box for each paragraph
         pdf.setStrokeColorRGB(0, 1, 1)  # light blue for bounding box of paragraph
@@ -146,10 +151,11 @@ class HocrTransform2():
                 continue
 
             coords = self.element_coordinates(elem)
-            x1, y1, x2, y2 = self.coordinates(coords, dpi)
+
+            x1, y1, x2, y2 = HocrTransform2.coordinates(coords, dpi)
 
             # draw the bbox border
-            if showBoundingboxes:
+            if show_bounding_boxes:
                 pdf.rect(x1, height - y2, x2 - x1, y2 - y1, fill=1)
 
         # check if element with class 'ocrx_word' are available
@@ -158,7 +164,7 @@ class HocrTransform2():
         if hocr.find(".//%sspan[@class='ocrx_word']" % xmlns) is not None:
             elemclass = "ocrx_word"
 
-        # itterate all text elements
+        # iterate all text elements
         pdf.setStrokeColorRGB(1, 0, 0)  # light green for bounding box of word/line
         pdf.setLineWidth(0.5)  # bounding box line width
         pdf.setDash(6, 3)  # bounding box is dashed
@@ -173,26 +179,26 @@ class HocrTransform2():
             x1, y1, x2, y2 = HocrTransform2.coordinates(coords, dpi)
 
             # draw the bbox border
-            if showBoundingboxes:
+            if show_bounding_boxes:
                 pdf.rect(x1, height - y2, x2 - x1, y2 - y1, fill=0)
 
             text = pdf.beginText()
-            fontsize = self.px2pt(coords[3] - coords[1])
-            text.setFont(fontname, fontsize)
+            fontsize = HocrTransform2.px2pt(coords[3] - coords[1], dpi)
+            text.setFont(font_name, fontsize)
 
             # set cursor to bottom left corner of bbox (adjust for dpi)
             text.setTextOrigin(x1, height - y2)
 
             # scale the width of the text to fill the width of the bbox
-            text.setHorizScale(100 * (x2 - x1) / pdf.stringWidth(elemtxt, fontname, fontsize))
+            text.setHorizScale(100 * (x2 - x1) / pdf.stringWidth(elemtxt, font_name, fontsize))
 
             # write the text to the page
             text.textLine(elemtxt)
             pdf.drawText(text)
 
         # put the image on the page, scaled to fill the page
-        if imageFileName is not None:
-            im = Image.open(imageFileName)
+        if image_filename is not None:
+            im = Image.open(image_filename)
             pdf.drawInlineImage(im, 0, 0, width=width, height=height)
 
         # finish up the page and save it

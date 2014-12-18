@@ -20,6 +20,14 @@ unpaper --dpi 300 --mask-scan-size 100 --no-deskew --no-grayfilter --no-blackfil
 tesseract -l eng ${TMPDIR}/0001.cleaned.pbm ${TMPDIR}/0001.hocr hocr pdfgeneral
 python2 ./src/HocrTransform.py -r 300 -i ${TMPDIR}/0001.cleaned.pbm ${TMPDIR}/0001.hocr
 
+python2 ./src/HocrTransform.py -b -r 300 "$curHocr" "$curOCRedPDFDebug"
+
+# Create PDF with hidden OCR text under image
+python ./src/HocrTransform.py -r 300 -i /home/rslinford/Dev/PycharmProjects/H4D_Data_Liberation/src/OCRmyPDF/src/test/tmpw/0001.cleaned.pgm /home/rslinford/Dev/PycharmProjects/H4D_Data_Liberation/src/OCRmyPDF/src/test/tmpw/0001.hocr t.pdf
+
+# Create PDF with OCR text and boxes (no image)
+python ./src/HocrTransform.py -b -r 300 /home/rslinford/Dev/PycharmProjects/H4D_Data_Liberation/src/OCRmyPDF/src/test/tmpw/0001.hocr d.pdf
+
 Size      Filename
 ========  =====================
       65  tmp.txt
