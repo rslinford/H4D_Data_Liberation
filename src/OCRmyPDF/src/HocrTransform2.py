@@ -8,6 +8,7 @@
 ##############################################################################
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.units import inch
+from reportlab.lib.colors import Color
 from lxml import etree as ElementTree
 from PIL import Image
 import re
@@ -119,6 +120,14 @@ class HocrTransform2():
 
         return height, width
 
+    @staticmethod
+    def draw_box(canvas, page_height, x1, y1, x2, y2, stroke_color, fill_color, line_width=1, is_filled=0):
+
+        canvas.setStrokeColor(stroke_color)  # light blue for bounding box of paragraph
+        canvas.setFillColor(fill_color)  # light blue for bounding box of paragraph
+        canvas.setLineWidth(line_width)  # no line for bounding box
+        canvas.rect(x1, page_height - y2, x2 - x1, y2 - y1, fill=is_filled)
+
     def to_pdf(self, out_filename, image_filename, show_bounding_boxes, hocr_file, dpi, font_name="Helvetica"):
         """
         Creates a PDF file with an image superimposed on top of the text.
@@ -128,33 +137,31 @@ class HocrTransform2():
         It can have a lower resolution, different color mode, etc.
         """
 
-        # constructor stuff
         hocr_tree = ElementTree.ElementTree()
         hocr_tree.parse(hocr_file)
         xmlns = self.lookup_namespace(hocr_tree)
 
-        height, width = self.calculate_pt_dimensions(dpi, hocr_tree, xmlns)
+        pt_page_height, pt_page_width = self.calculate_pt_dimensions(dpi, hocr_tree, xmlns)
 
         # no width and height definition in the ocr_image element of the hocr file
-        if width is None:
+        if pt_page_width is None:
             print("No page dimension found in the hocr file")
             sys.exit(1)
-        # end constructor stuff
 
         # Create the PDF file. Page size in points (1/72 in.)
-        pdf = Canvas(out_filename, pagesize=(width, height), pageCompression=1)
+        pdf = Canvas(out_filename, pagesize=(pt_page_width, pt_page_height), pageCompression=1)
 
         # draw bounding box for each paragraph
+        green = Color(0, 1, 0)
+        blue = Color(0, 1, 1)
         if show_bounding_boxes:
-            pdf.setStrokeColorRGB(0, 1, 1)  # light blue for bounding box of paragraph
-            pdf.setFillColorRGB(0, 1, 1)  # light blue for bounding box of paragraph
-            pdf.setLineWidth(0)  # no line for bounding box
             for elem in hocr_tree.findall(".//%sp[@class='%s']" % (xmlns, "ocr_par")):
                 element_text = self._get_element_text(elem).rstrip()
                 if len(element_text) == 0:
                     continue
                 x1, y1, x2, y2 = self.convert_px_coordinates_to_pt(self.element_coordinates(elem), dpi)
-                pdf.rect(x1, height - y2, x2 - x1, y2 - y1, fill=1)
+                self.draw_box(pdf, pt_page_height, x1, y1, x2, y2, green, blue, is_filled=1, line_width=4)
+                green = Color(green.rgb()[0] + 0.1, 1, 0)
 
         # check if element with class 'ocrx_word' are available
         # otherwise use 'ocr_line' as fallback
@@ -163,10 +170,9 @@ class HocrTransform2():
             element_class = "ocrx_word"
 
         # iterate all text elements
-        pdf.setStrokeColorRGB(1, 0, 0)  # light green for bounding box of word/line
-        pdf.setLineWidth(0.5)  # bounding box line width
+        red = Color(1, 0, 0)
         pdf.setDash(6, 3)  # bounding box is dashed
-        pdf.setFillColorRGB(0, 0, 0)  # text in black
+        black = Color(0, 0, 0)
         for elem in hocr_tree.findall(".//%sspan[@class='%s']" % (xmlns, element_class)):
             element_text = self._get_element_text(elem).rstrip()
             element_text = self.replace_unsupported_chars(element_text)
@@ -178,26 +184,27 @@ class HocrTransform2():
 
             # draw the bbox border
             if show_bounding_boxes:
-                pdf.rect(x1, height - y2, x2 - x1, y2 - y1, fill=0)
+                self.draw_box(pdf, pt_page_height, x1, y1, x2, y2, red, black, line_width=0.5)
 
             text = pdf.beginText()
             fontsize = self.px2pt(coordinates[3] - coordinates[1], dpi)
             text.setFont(font_name, fontsize)
 
             # set cursor to bottom left corner of bbox (adjust for dpi)
-            text.setTextOrigin(x1, height - y2)
+            text.setTextOrigin(x1, pt_page_height - y2)
 
             # scale the width of the text to fill the width of the bbox
             text.setHorizScale(100 * (x2 - x1) / pdf.stringWidth(element_text, font_name, fontsize))
 
             # write the text to the page
             text.textLine(element_text)
+            pdf.setStrokeColor(black)
             pdf.drawText(text)
 
         # put the image on the page, scaled to fill the page
         if image_filename is not None:
             im = Image.open(image_filename)
-            pdf.drawInlineImage(im, 0, 0, width=width, height=height)
+            pdf.drawInlineImage(im, 0, 0, width=pt_page_width, height=pt_page_height)
 
         # finish up the page and save it
         pdf.showPage()
