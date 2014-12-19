@@ -28,14 +28,14 @@ class HocrTransform2():
     def __init__(self):
         pass
 
-    def __str__(self, hocr):
+    def __str__(self, hocr_tree):
         """
         Return the textual content of the HTML body
         """
-        if hocr is None:
+        if hocr_tree is None:
             return ''
         xmlns = HocrTransform2.lookup_namespace()
-        body = hocr.find(".//%sbody" % xmlns)
+        body = hocr_tree.find(".//%sbody" % xmlns)
         if body:
             return self._get_element_text(body).encode('utf-8')  # XML gives unicode
         else:
@@ -54,7 +54,8 @@ class HocrTransform2():
             text = text + element.tail
         return text
 
-    def element_coordinates(self, element):
+    @staticmethod
+    def element_coordinates(element):
         """
         Returns a tuple containing the coordinates of the bounding box around
         an element
@@ -87,9 +88,8 @@ class HocrTransform2():
         return string_thing
 
     @staticmethod
-    def coordinates(box_coordinates, dpi):
+    def convert_px_coordinates_to_pt(box_coordinates, dpi):
         """
-
         :rtype : list[4]
         """
         x1 = HocrTransform2.px2pt(box_coordinates[0], dpi)
@@ -99,14 +99,25 @@ class HocrTransform2():
         return x1, y1, x2, y2
 
     @staticmethod
-    def lookup_namespace(hocr):
-        # if the hOCR file has a namespace, ElementTree requires its use to find elements
-        matches = HocrTransform2.namespacePattern.search(hocr.getroot().tag)
+    def lookup_namespace(hocr_tree):
+        # ElementTree requires the namespace, if it has one, to find elements
+        matches = HocrTransform2.namespacePattern.search(hocr_tree.getroot().tag)
         xmlns = ''
         if matches:
             xmlns = matches.group(1)
 
         return xmlns
+
+    @staticmethod
+    def calculate_pt_dimensions(dpi, hocr_tree, xmlns):
+        height, width = None, None
+        for div in hocr_tree.findall(".//%sdiv[@class='ocr_page']" % (xmlns)):
+            coordinates = HocrTransform2.element_coordinates(div)
+            width = HocrTransform2.px2pt(coordinates[2] - coordinates[0], dpi)
+            height = HocrTransform2.px2pt(coordinates[3] - coordinates[1], dpi)
+            break  # there shouldn't be more than one, and if there is, we don't want it
+
+        return height, width
 
     def to_pdf(self, out_filename, image_filename, show_bounding_boxes, hocr_file, dpi, font_name="Helvetica"):
         """
@@ -118,82 +129,69 @@ class HocrTransform2():
         """
 
         # constructor stuff
-        hocr = ElementTree.ElementTree()
-        hocr.parse(hocr_file)
+        hocr_tree = ElementTree.ElementTree()
+        hocr_tree.parse(hocr_file)
+        xmlns = self.lookup_namespace(hocr_tree)
 
-        xmlns = self.lookup_namespace(hocr)
+        height, width = self.calculate_pt_dimensions(dpi, hocr_tree, xmlns)
 
-        # get dimension in pt (not pixel!!!!) of the OCRed image
-        width, height = None, None
-        for div in hocr.findall(".//%sdiv[@class='ocr_page']" % (xmlns)):
-            coords = self.element_coordinates(div)
-            width = HocrTransform2.px2pt(coords[2] - coords[0], dpi)
-            height = HocrTransform2.px2pt(coords[3] - coords[1], dpi)
-            break  # there shouldn't be more than one, and if there is, we don't want it
-
-        # no width and heigh definition in the ocr_image element of the hocr file
+        # no width and height definition in the ocr_image element of the hocr file
         if width is None:
             print("No page dimension found in the hocr file")
             sys.exit(1)
         # end constructor stuff
 
-        # create the PDF file
-        pdf = Canvas(out_filename, pagesize=(width, height), pageCompression=1)  # page size in points (1/72 in.)
+        # Create the PDF file. Page size in points (1/72 in.)
+        pdf = Canvas(out_filename, pagesize=(width, height), pageCompression=1)
 
         # draw bounding box for each paragraph
-        pdf.setStrokeColorRGB(0, 1, 1)  # light blue for bounding box of paragraph
-        pdf.setFillColorRGB(0, 1, 1)  # light blue for bounding box of paragraph
-        pdf.setLineWidth(0)  # no line for bounding box
-        for elem in hocr.findall(".//%sp[@class='%s']" % (xmlns, "ocr_par")):
-
-            elemtxt = self._get_element_text(elem).rstrip()
-            if len(elemtxt) == 0:
-                continue
-
-            coords = self.element_coordinates(elem)
-
-            x1, y1, x2, y2 = HocrTransform2.coordinates(coords, dpi)
-
-            # draw the bbox border
-            if show_bounding_boxes:
+        if show_bounding_boxes:
+            pdf.setStrokeColorRGB(0, 1, 1)  # light blue for bounding box of paragraph
+            pdf.setFillColorRGB(0, 1, 1)  # light blue for bounding box of paragraph
+            pdf.setLineWidth(0)  # no line for bounding box
+            for elem in hocr_tree.findall(".//%sp[@class='%s']" % (xmlns, "ocr_par")):
+                element_text = self._get_element_text(elem).rstrip()
+                if len(element_text) == 0:
+                    continue
+                x1, y1, x2, y2 = self.convert_px_coordinates_to_pt(self.element_coordinates(elem), dpi)
                 pdf.rect(x1, height - y2, x2 - x1, y2 - y1, fill=1)
 
         # check if element with class 'ocrx_word' are available
         # otherwise use 'ocr_line' as fallback
-        elemclass = "ocr_line"
-        if hocr.find(".//%sspan[@class='ocrx_word']" % xmlns) is not None:
-            elemclass = "ocrx_word"
+        element_class = "ocr_line"
+        if hocr_tree.find(".//%sspan[@class='ocrx_word']" % xmlns) is not None:
+            element_class = "ocrx_word"
 
         # iterate all text elements
         pdf.setStrokeColorRGB(1, 0, 0)  # light green for bounding box of word/line
         pdf.setLineWidth(0.5)  # bounding box line width
         pdf.setDash(6, 3)  # bounding box is dashed
         pdf.setFillColorRGB(0, 0, 0)  # text in black
-        for elem in hocr.findall(".//%sspan[@class='%s']" % (xmlns, elemclass)):
-            elemtxt = self._get_element_text(elem).rstrip()
-            elemtxt = self.replace_unsupported_chars(elemtxt)
-            if len(elemtxt) == 0:
+        for elem in hocr_tree.findall(".//%sspan[@class='%s']" % (xmlns, element_class)):
+            element_text = self._get_element_text(elem).rstrip()
+            element_text = self.replace_unsupported_chars(element_text)
+            if len(element_text) == 0:
                 continue
 
-            coords = self.element_coordinates(elem)
-            x1, y1, x2, y2 = HocrTransform2.coordinates(coords, dpi)
+            coordinates = self.element_coordinates(elem)
+            x1, y1, x2, y2 = HocrTransform2.convert_px_coordinates_to_pt(coordinates, dpi)
 
             # draw the bbox border
             if show_bounding_boxes:
                 pdf.rect(x1, height - y2, x2 - x1, y2 - y1, fill=0)
 
             text = pdf.beginText()
-            fontsize = HocrTransform2.px2pt(coords[3] - coords[1], dpi)
+            fontsize = self.px2pt(coordinates[3] - coordinates[1], dpi)
             text.setFont(font_name, fontsize)
 
             # set cursor to bottom left corner of bbox (adjust for dpi)
             text.setTextOrigin(x1, height - y2)
 
             # scale the width of the text to fill the width of the bbox
-            text.setHorizScale(100 * (x2 - x1) / pdf.stringWidth(elemtxt, font_name, fontsize))
+            text.setHorizScale(100 * (x2 - x1) / pdf.stringWidth(element_text, font_name, fontsize))
 
             # write the text to the page
-            text.textLine(elemtxt)
+            text.textLine(element_text)
             pdf.drawText(text)
 
         # put the image on the page, scaled to fill the page
