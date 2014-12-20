@@ -153,15 +153,19 @@ class HocrTransform2():
 
         # draw bounding box for each paragraph
         green = Color(0, 1, 0)
+        yellow = Color(0.8, 1, 0)
         blue = Color(0, 1, 1)
-        if show_bounding_boxes:
-            for elem in hocr_tree.findall(".//%sp[@class='%s']" % (xmlns, "ocr_par")):
-                element_text = self._get_element_text(elem).rstrip()
-                if len(element_text) == 0:
-                    continue
+        paragraph = 0
+        for elem in hocr_tree.findall(".//%sp[@class='%s']" % (xmlns, "ocr_par")):
+            element_text = self._get_element_text(elem).rstrip()
+            if len(element_text) == 0:
+                continue
+            if show_bounding_boxes:
                 x1, y1, x2, y2 = self.convert_px_coordinates_to_pt(self.element_coordinates(elem), dpi)
-                self.draw_box(pdf, pt_page_height, x1, y1, x2, y2, green, blue, is_filled=1, line_width=4)
-                green = Color(green.rgb()[0] + 0.1, 1, 0)
+                self.draw_box(pdf, pt_page_height, x1, y1, x2, y2, yellow, blue, is_filled=1, line_width=4)
+            print '%d] %s' % (paragraph, elem.get('id'))
+            paragraph += 1
+            # green = Color(green.rgb()[0] + 0.1, 1, 0)
 
         # check if element with class 'ocrx_word' are available
         # otherwise use 'ocr_line' as fallback
