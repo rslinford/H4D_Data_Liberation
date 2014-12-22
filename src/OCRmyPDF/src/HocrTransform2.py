@@ -133,21 +133,23 @@ class HocrTransform2():
         canvas.rect(x1, page_height - y2, x2 - x1, y2 - y1, fill=is_filled)
 
     @staticmethod
-    def annotate_box(canvas, x, y, annotation):
-        font_name, font_size = "Courier", 8
-
+    def annotate_box(canvas, x, y, annotation, right_align=0, top_align=0):
+        font_name, font_size = "Courier", 5
         canvas.setLineWidth(1)
         canvas.setDash([], 0)
-        canvas.setStrokeColorRGB(0.2, 0.5, 0.2)
-        canvas.setFillColorRGB(0.4, 0.6, 0.4)
-
+        canvas.setStrokeColorRGB(0.3, 0.1, 0.3)
+        canvas.setFillColorRGB(0.3, 0.1, 0.3)
         text = canvas.beginText()
         text.setTextRenderMode(0)
         text.setFont(font_name, font_size)
-        text.setTextOrigin(x, y)
-        text.setHorizScale(80)
+        text.setHorizScale(100)
+        go_left, go_down = 0, 0
+        if right_align == 1:
+            go_left = canvas.stringWidth(annotation, font_name, font_size)
+        if top_align == 1:
+            go_down = 3
+        text.setTextOrigin(x - go_left, y - go_down)
         text.textLine(annotation)
-
         canvas.drawText(text)
 
     def to_pdf(self, out_filename, image_filename, show_bounding_boxes, hocr_file, dpi, font_name="Helvetica"):
@@ -189,7 +191,7 @@ class HocrTransform2():
             if show_bounding_boxes:
                 x1, y1, x2, y2 = self.convert_px_coordinates_to_pt(self.element_coordinates(paragraph_element), dpi)
                 self.draw_box(pdf, pt_page_height, x1, y1, x2, y2, lime_green, blue, is_filled=1, line_width=4)
-                self.annotate_box(pdf, x1, pt_page_height - y1, 'p(%d) %s' % (paragraph_count, paragraph_element.get('id')))
+                self.annotate_box(pdf, x1, pt_page_height - y1, 'p-%d_%s' % (paragraph_count, paragraph_element.get('id').rsplit('_', 1)[1]))
 
             line_count = 0
             for line_element in paragraph_element.findall(".//%sspan[@class='%s']" % (xmlns, "ocr_line")):
@@ -200,40 +202,40 @@ class HocrTransform2():
                 if show_bounding_boxes:
                     x1, y1, x2, y2 = self.convert_px_coordinates_to_pt(self.element_coordinates(line_element), dpi)
                     self.draw_box(pdf, pt_page_height, x1, y1, x2, y2, green, blue, is_filled=1, line_width=1)
-                    self.annotate_box(pdf, x1, pt_page_height - y1, 'l(%d) %s' % (line_count, line_element.get('id')))
+                    self.annotate_box(pdf, x1, pt_page_height - y2, 'l-%d_%s' % (line_count, line_element.get('id').rsplit('_', 1)[1]), right_align=1)
 
-                word_count = 0
-                for word_element in paragraph_element.findall(".//%sspan[@class='%s']" % (xmlns, "ocrx_word")):
-                    element_text = self._get_element_text(word_element).rstrip()
-                    element_text = self.replace_unsupported_chars(element_text)
-                    if len(element_text) == 0:
-                        continue
-                    word_count += 1
+                    word_count = 0
+                    for word_element in paragraph_element.findall(".//%sspan[@class='%s']" % (xmlns, "ocrx_word")):
+                        element_text = self._get_element_text(word_element).rstrip()
+                        element_text = self.replace_unsupported_chars(element_text)
+                        if len(element_text) == 0:
+                            continue
+                        word_count += 1
 
-                    coordinates = self.element_coordinates(word_element)
-                    x1, y1, x2, y2 = HocrTransform2.convert_px_coordinates_to_pt(coordinates, dpi)
+                        coordinates = self.element_coordinates(word_element)
+                        x1, y1, x2, y2 = HocrTransform2.convert_px_coordinates_to_pt(coordinates, dpi)
 
-                    # draw the bbox border
-                    if show_bounding_boxes:
-                        self.draw_box(pdf, pt_page_height, x1, y1, x2, y2, red, black, line_width=0.5, is_dashed=1)
-                        self.annotate_box(pdf, x1, pt_page_height - y1, 'w(%d) %s' % (word_count, word_element.get('id')))
-                    print 'p(%d)l(%d)w(%d)] %s %s %s = "%s"' % (paragraph_count, line_count, word_count, paragraph_element.get('id'), line_element.get('id'), word_element.get('id'), element_text)
+                        # draw the bbox border
+                        if show_bounding_boxes:
+                            self.draw_box(pdf, pt_page_height, x1, y1, x2, y2, red, black, line_width=0.5, is_dashed=1)
+                            self.annotate_box(pdf, x1, pt_page_height - y1, 'w-%d' % word_count, top_align=1)
+                        print 'p(%d)l(%d)w(%d)] %s %s %s = "%s"' % (paragraph_count, line_count, word_count, paragraph_element.get('id'), line_element.get('id'), word_element.get('id'), element_text)
 
-                    fontsize = self.px2pt(coordinates[3] - coordinates[1], dpi)
+                        fontsize = self.px2pt(coordinates[3] - coordinates[1], dpi)
 
-                    pdf.setLineWidth(1)
-                    pdf.setDash([], 0)
-                    pdf.setStrokeColor(black)
-                    pdf.setFillColor(black)
+                        pdf.setLineWidth(1)
+                        pdf.setDash([], 0)
+                        pdf.setStrokeColor(black)
+                        pdf.setFillColor(black)
 
-                    text = pdf.beginText()
-                    text.setTextRenderMode(0)
-                    text.setFont(font_name, fontsize)
-                    text.setTextOrigin(x1, pt_page_height - y2)
-                    text.setHorizScale(100 * (x2 - x1) / pdf.stringWidth(element_text, font_name, fontsize))
-                    text.textLine(element_text)
+                        text = pdf.beginText()
+                        text.setTextRenderMode(0)
+                        text.setFont(font_name, fontsize)
+                        text.setTextOrigin(x1, pt_page_height - y2)
+                        text.setHorizScale(100 * (x2 - x1) / pdf.stringWidth(element_text, font_name, fontsize))
+                        text.textLine(element_text)
 
-                    pdf.drawText(text)
+                        pdf.drawText(text)
 
         # put the image on the page, scaled to fill the page
         if image_filename is not None:
