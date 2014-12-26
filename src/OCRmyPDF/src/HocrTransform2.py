@@ -224,11 +224,11 @@ class HocrTransform2():
                         if show_bounding_boxes:
                             self.draw_box(pdf, pt_page_height, x1, y1, x2, y2, red, black, line_width=0.5, is_dashed=1)
                             self.annotate_box(pdf, x1, pt_page_height - y1, 'w-%d' % word_count, top_align=1)
-                        count_path = 'p(%d)l(%d)w(%d)' % (paragraph_count, line_count, word_count)
-                        id_path = '%s %s %s' % (paragraph_element.get('id'), line_element.get('id'), word_element.get('id'))
-                        print '%s] %s = "%s"' % (count_path, id_path, element_text)
-                        word_dict['%s] %s' % (count_path, id_path)] = element_text
-                        word_array[paragraph_count][line_count][word_count] = element_text
+                        # count_path = 'p(%d)l(%d)w(%d)' % (paragraph_count, line_count, word_count)
+                        # id_path = '%s %s %s' % (paragraph_element.get('id'), line_element.get('id'), word_element.get('id'))
+                        # print '%s] %s = "%s"' % (count_path, id_path, element_text)
+                        # word_dict['%s] %s' % (count_path, id_path)] = element_text
+                        # word_array[paragraph_count][line_count][word_count] = element_text
 
                         fontsize = self.px2pt(coordinates[3] - coordinates[1], dpi)
 
@@ -246,10 +246,10 @@ class HocrTransform2():
 
                         pdf.drawText(text)
 
-        print "Word Dict"
-        print word_dict
-        print "Word Array"
-        print word_array
+        # print "Word Dict"
+        # print word_dict
+        # print "Word Array"
+        # print word_array
 
         #pdf.textAnnotation(repr(word_array), name='word_array')
 
