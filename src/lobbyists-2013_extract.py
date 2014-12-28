@@ -1862,37 +1862,49 @@ with open(csv_output_filename, 'ab') as ofile:
             file_stem = temp[0]
             clean_file_stem = file_stem + '_clean'
             clean_file_name = clean_file_stem + ppm_ext
+
             print '{0} Cleaning {1} to {2}'.format(main_loop_tag, f, clean_file_name)
-            clean_cmd = ['unpaper', '-v', '--pre-border', '100,120,70,70', '--mask', '50,50,2500,3250', '--deskew-scan-size', '2100', '--deskew-scan-depth', '0.9', '--deskew-scan-direction', 'left',
+            # Improve contrast, clean up scanning artifacts, and deskew
+            clean_cmd = ['unpaper', '-v', '--pre-border', '100,120,70,70', '--mask', '50,50,2500,3250', '--deskew-scan-size', '2100', '--deskew-scan-depth', '0.9', '--deskew-scan-direction', 'left,bottom',
                          '--deskew-scan-step', '0.01', os.path.join(work_dir, f), os.path.join(work_dir, clean_file_name)]
-            # clean_cmd = ['unpaper', '-vv', '--dpi', '300', '--mask-scan-size', '100', '--no-border-align', os.path.join(work_dir, f), os.path.join(work_dir, clean_file_name)]
             result_code = subprocess.call(clean_cmd, cwd=work_dir)
             if 0 != result_code:
                 csv_row['message'] = '{0} Error cleaning image. Command {1} returned error code {2}'.format(main_loop_tag, clean_cmd[0], result_code)
                 print '{0} cmd: {1}'.format(csv_row['message'], clean_cmd)
                 continue
+
+            # OCR to hocr format using 'pdfgeneral' config
             ocr_cmd = ['tesseract', os.path.join(work_dir, clean_file_name), clean_file_stem, '-l', 'eng', 'hocr', 'pdfgeneral']
             result_code = subprocess.call(ocr_cmd, cwd=work_dir)
             if 0 != result_code:
                 csv_row['message'] = '{0} Error during OCR of image {1}. Command {2} returned error code {3}'.format(main_loop_tag, f, ocr_cmd[0], result_code)
                 print '{0} cmd: {1}'.format(csv_row['message'], clean_cmd)
                 continue
+
+            # OCR to plain text (txt) using 'pdfgeneral' config. TODO: compare resulting txt to hocr. Remove after curiosity is satisfied
             ocr_cmd = ['tesseract', os.path.join(work_dir, clean_file_name), clean_file_stem + 'p', '-l', 'eng', 'pdfgeneral']
             result_code = subprocess.call(ocr_cmd, cwd=work_dir)
             if 0 != result_code:
                 csv_row['message'] = '{0} Error during OCR of image {1}. Command {2} returned error code {3}'.format(main_loop_tag, f, ocr_cmd[0], result_code)
                 print '{0} cmd: {1}'.format(csv_row['message'], clean_cmd)
                 continue
-                # ocr_cmd = ['tesseract', os.path.join(work_dir, clean_file_name), clean_file_stem + 'd', '-l', 'eng', 'myconfigd']
-                # result_code = subprocess.call(ocr_cmd, cwd=work_dir)
-                # if 0 != result_code:
-                # csv_row['message'] = '{0} Error during OCR of image {1}. Command {2} returned error code {3}'.format(
-                # main_loop_tag, f, ocr_cmd[0], result_code)
-                # print '{0} cmd: {1}'.format(csv_row['message'], clean_cmd)
-                #     continue
 
-            # /home/rslinford/Dev/PycharmProjects/H4D_Data_Liberation/src/OCRmyPDF/src/HocrTransform2.py
-            # -b -r 300 /home/rslinford/Dev/PycharmProjects/H4D_Data_Liberation/src/OCRmyPDF/src/test/tmpw/0001.hocr d.pdf
+            # TODO: identify key fields using hocr and note their coordinates
+            # TODO: extract key fields from images using hocr coordinates
+            # TODO: include key field snippets in CSV, perhaps URLs. Upload image snippets to URLs.
+
+            # OCR using 'myconfigd' config (digits only) for sake of comparison. TODO: OCR number snippets instead of entire page. First must identify number field coordinates in cleaned image and extract the snippets.
+            #
+            # ocr_cmd = ['tesseract', os.path.join(work_dir, clean_file_name), clean_file_stem + 'd', '-l', 'eng', 'myconfigd']
+            # result_code = subprocess.call(ocr_cmd, cwd=work_dir)
+            # if 0 != result_code:
+            # csv_row['message'] = '{0} Error during OCR of image {1}. Command {2} returned error code {3}'.format(
+            # main_loop_tag, f, ocr_cmd[0], result_code)
+            # print '{0} cmd: {1}'.format(csv_row['message'], clean_cmd)
+            #     continue
+
+            # Spacial rendering of the OCRed hocr. Highlights and outlines layout elements: paragraphs, lines, and words.
+            #    Command HocrTransform2.py -b -r 300 <clean-file-stem>.hocr <clean-file-stem>d.pdf
             hocr_visualize_cmd = ['python', '/home/rslinford/Dev/PycharmProjects/H4D_Data_Liberation/src/OCRmyPDF/src/HocrTransform2.py',
                                   '-b', '-r', '300', os.path.join(work_dir, clean_file_stem) + '.hocr', os.path.join(work_dir, clean_file_name) + 'd.pdf']
             result_code = subprocess.call(hocr_visualize_cmd, cwd=work_dir)
@@ -1901,7 +1913,7 @@ with open(csv_output_filename, 'ab') as ofile:
                 print '{0} cmd: {1}'.format(csv_row['message'], clean_cmd)
                 continue
 
-        # Convert images to PNGs
+        # Convert images to PNGs to save space. Keeping images to debug clean_cmd. TODO: delete images instead
         # TODO: factor out into method
         for f in os.listdir(work_dir):
             temp = f.rsplit(ppm_ext, 1)
