@@ -7,7 +7,9 @@ section_list: list of alphabetical sections identified by URL suffixes
     <etc>
 
 url_section_list: The landing page, also section 'A'. Like all sections it contains the section_list.
-http://sos.nh.gov/Lob012914A.aspx
+http://sos.nh.gov/Lob012914A.aspx   4th Q 2013
+
+http://sos.nh.gov/lob012815A.aspx   4th Q 2024
 
 xpath_section_query: query returns list all section_list links
 //*[@id="ctl00_cphMain_dzTopSection_columnDisplay_ctl00_controlcolumn_ctl00_WidgetHost_WidgetHost_widget_CB"]/a
@@ -57,11 +59,23 @@ def normalize(a):
 
 parser = etree.HTMLParser()
 
+url_section_list_base = 'http://sos.nh.gov'
+#
+# Q4 of 2013
+# url_section_list = url_section_list_base + '/Lob012914A.aspx'
+#
+# Q4 of 2014
+url_section_list = url_section_list_base + '/lob012815A.aspx'
+reporting_year = '2014'
+
+url_report_list = url_section_list
+url_report_pdf_base_location = 'http://sos.nh.gov'
+
 try:
     right_now = time.time()
     current_timestamp = datetime.datetime.fromtimestamp(right_now).strftime('%Y-%m-%d_%H-%M-%S')
     current_username = os.environ.get('USERNAME')
-    reporting_batch = 'lobbyists-2013-batch'
+    reporting_batch = 'lobbyists-' + reporting_year + '-batch'
     run_tag = reporting_batch + '_crawled-' + current_timestamp + '_by-' + current_username
     archive_name = run_tag
     target_dir = run_tag
@@ -82,11 +96,6 @@ print
 print 'Target download directory {' + target_dir + '}'
 print
 sys.stdout.flush()
-
-url_section_list_base = 'http://sos.nh.gov'
-url_section_list = url_section_list_base + '/Lob012914A.aspx'
-url_report_list = url_section_list
-url_report_pdf_base_location = 'http://sos.nh.gov'
 
 xpath_section_query = '''//*[@id="ctl00_cphMain_dzTopSection_columnDisplay_ctl00_controlcolumn_ctl00_WidgetHost_WidgetHost_widget_CB"]//a'''
 xpath_report_query = '''//*[@id="ctl00_cphMain_dzTopSection_columnDisplay_ctl00_controlcolumn_ctl01_WidgetHost_WidgetHost_widget_ListSummary1"]/div[*]/a/@href'''

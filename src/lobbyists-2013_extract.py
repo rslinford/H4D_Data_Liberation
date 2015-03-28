@@ -1847,7 +1847,7 @@ with open(csv_output_filename, 'ab') as ofile:
         csv_row['original-asset'] = csv_row['original-asset'].format(len(os.listdir(work_dir)))
         print '{0} {1} image files extracted'.format(main_loop_tag, csv_row['page-count'])
         # TODO: factor out into option
-        # Only process report with 3 pages
+        # Only process report with 3 pages (to speed up testing -- remove for production run)
         if csv_row['page-count'] != 3:
             print "{0} skipping report because there aren't 3 pages".format(main_loop_tag)
             # clean up
@@ -1862,6 +1862,12 @@ with open(csv_output_filename, 'ab') as ofile:
             file_stem = temp[0]
             clean_file_stem = file_stem + '_clean'
             clean_file_name = clean_file_stem + ppm_ext
+
+            # TODO: remove this faulty assumption
+            # Assume only page 2 is of interest for now. Remove for production run.
+            if file_stem.rsplit('-', 1)[1] != '2':
+                print "{0} skipping page #{1}.".format(main_loop_tag, file_stem.rsplit('-', 1)[1])
+                continue
 
             print '{0} Cleaning {1} to {2}'.format(main_loop_tag, f, clean_file_name)
             # Improve contrast, clean up scanning artifacts, and deskew
@@ -1878,29 +1884,32 @@ with open(csv_output_filename, 'ab') as ofile:
             result_code = subprocess.call(ocr_cmd, cwd=work_dir)
             if 0 != result_code:
                 csv_row['message'] = '{0} Error during OCR of image {1}. Command {2} returned error code {3}'.format(main_loop_tag, f, ocr_cmd[0], result_code)
-                print '{0} cmd: {1}'.format(csv_row['message'], clean_cmd)
+                print '{0} cmd: {1}'.format(csv_row['message'], ocr_cmd)
                 continue
 
             # OCR to plain text (txt) using 'pdfgeneral' config. TODO: compare resulting txt to hocr. Remove after curiosity is satisfied
-            ocr_cmd = ['tesseract', os.path.join(work_dir, clean_file_name), clean_file_stem + 'p', '-l', 'eng', 'pdfgeneral']
-            result_code = subprocess.call(ocr_cmd, cwd=work_dir)
-            if 0 != result_code:
-                csv_row['message'] = '{0} Error during OCR of image {1}. Command {2} returned error code {3}'.format(main_loop_tag, f, ocr_cmd[0], result_code)
-                print '{0} cmd: {1}'.format(csv_row['message'], clean_cmd)
-                continue
+            # ocr_cmd = ['tesseract', os.path.join(work_dir, clean_file_name), clean_file_stem + 'p', '-l', 'eng', 'pdfgeneral']
+            # result_code = subprocess.call(ocr_cmd, cwd=work_dir)
+            # if 0 != result_code:
+            #     csv_row['message'] = '{0} Error during OCR of image {1}. Command {2} returned error code {3}'.format(main_loop_tag, f, ocr_cmd[0], result_code)
+            #     print '{0} cmd: {1}'.format(csv_row['message'], ocr_cmd)
+            #     continue
 
             # TODO: identify key fields using hocr and note their coordinates
+            #
+            # Example target line:
+            #     "line_1_18 ['295', '1644'] ['1788', '1684;']: c) Total ofall fees received to date c) $ 1 5,000.00 \n     "
             # TODO: extract key fields from images using hocr coordinates
             # TODO: include key field snippets in CSV, perhaps URLs. Upload image snippets to URLs.
+            # j7zayDQhKv
 
             # OCR using 'myconfigd' config (digits only) for sake of comparison. TODO: OCR number snippets instead of entire page. First must identify number field coordinates in cleaned image and extract the snippets.
             #
             # ocr_cmd = ['tesseract', os.path.join(work_dir, clean_file_name), clean_file_stem + 'd', '-l', 'eng', 'myconfigd']
             # result_code = subprocess.call(ocr_cmd, cwd=work_dir)
             # if 0 != result_code:
-            # csv_row['message'] = '{0} Error during OCR of image {1}. Command {2} returned error code {3}'.format(
-            # main_loop_tag, f, ocr_cmd[0], result_code)
-            # print '{0} cmd: {1}'.format(csv_row['message'], clean_cmd)
+            #     csv_row['message'] = '{0} Error during OCR of image {1}. Command {2} returned error code {3}'.format(main_loop_tag, f, ocr_cmd[0], result_code)
+            #     print '{0} cmd: {1}'.format(csv_row['message'], ocr_cmd)
             #     continue
 
             # Spacial rendering of the OCRed hocr. Highlights and outlines layout elements: paragraphs, lines, and words.

@@ -36,10 +36,21 @@ def normalize(a):
 
 parser = etree.HTMLParser()
 
+
+# 2012 Independent Expenditures - Primary
+# url_report_list = 'http://sos.nh.gov/IndExpPrim12.aspx'
+#
+# 2014 Independent Expenditures - Primary and General
+report_year = '2014'
+url_report_list = 'http://sos.nh.gov/' + report_year + 'PIndExp.aspx'
+url_report_pdf_base_location = 'http://sos.nh.gov'
+filename_report_list = 'IndependentExpenditures' + report_year + '.html'
+
+
 right_now = time.time()
 current_timestamp = datetime.datetime.fromtimestamp(right_now).strftime('%Y-%m-%d_%H-%M-%S')
 current_username = os.environ.get('USERNAME')
-reporting_batch = 'independent-2013-batch'
+reporting_batch = 'independent-' + report_year + '-batch'
 run_tag = reporting_batch + '_crawled-' + current_timestamp + '_by-' + current_username
 archive_name = run_tag
 target_dir = run_tag
@@ -59,10 +70,6 @@ except OSError, e:
 
 print
 print 'Target download directory {' + target_dir + '}'
-
-url_report_list = 'http://sos.nh.gov/IndExpPrim12.aspx'
-url_report_pdf_base_location = 'http://sos.nh.gov'
-filename_report_list = 'IndependentExpenditures2012.html'
 
 print
 

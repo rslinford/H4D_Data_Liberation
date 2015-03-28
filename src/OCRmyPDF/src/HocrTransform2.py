@@ -9,7 +9,7 @@
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.units import inch
 from reportlab.lib.colors import Color
-from lxml import etree as ElementTree
+from lxml import etree
 from PIL import Image
 import re
 import sys
@@ -161,7 +161,7 @@ class HocrTransform2():
         It can have a lower resolution, different color mode, etc.
         """
 
-        hocr_tree = ElementTree.ElementTree()
+        hocr_tree = etree.ElementTree()
         hocr_tree.parse(hocr_file)
         xmlns = self.lookup_namespace(hocr_tree)
 
@@ -227,8 +227,10 @@ class HocrTransform2():
                         # count_path = 'p(%d)l(%d)w(%d)' % (paragraph_count, line_count, word_count)
                         # id_path = '%s %s %s' % (paragraph_element.get('id'), line_element.get('id'), word_element.get('id'))
                         # print '%s] %s = "%s"' % (count_path, id_path, element_text)
-                        # word_dict['%s] %s' % (count_path, id_path)] = element_text
-                        # word_array[paragraph_count][line_count][word_count] = element_text
+                        # word_dict[word_element.attrib['id']] = self._get_element_text(word_element)
+                        # print '%s="%s"' % (word_element.attrib['id'], word_dict[word_element.attrib['id']])
+                        word_array[paragraph_count][line_count][word_count] = {'p': paragraph_count, 'l': line_count, 'w': word_count, 'id': word_element.attrib['id'], 'word': element_text, 'path': hocr_tree.getpath(word_element)}
+                        print word_array[paragraph_count][line_count][word_count]
 
                         fontsize = self.px2pt(coordinates[3] - coordinates[1], dpi)
 
@@ -247,7 +249,7 @@ class HocrTransform2():
                         pdf.drawText(text)
 
         # print "Word Dict"
-        # print word_dict
+        print word_dict
         # print "Word Array"
         # print word_array
 
